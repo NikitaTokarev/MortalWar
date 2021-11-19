@@ -11,6 +11,7 @@ class ANaziZombieCharacter;
 class UAnimationAsset;
 class UAnimMontage;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAmmoChanged, int32, CurrentMagazineAmmo, int32, CurrentTotalAmmo);
 
 UENUM(BlueprintType)
 enum EHitLocation
@@ -99,7 +100,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
 	UAnimMontage* ThirdPersonMontage;
 
-	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
+	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings", Replicated)
 	float DelayBetweenShots;
 
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
@@ -122,6 +123,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	int32 CurrentMagazineAmmo;	
+
+	UPROPERTY(BlueprintAssignable)
+	FAmmoChanged OnAmmoChanged;
 	
 	bool bCanFire;
 	void ControlFireDelay();
@@ -194,6 +198,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	UTexture2D* GetWeaponIcon() const { return WeaponIcon; }
+
+	void CallAmmoChangedDelegate(int32 MagazineAmmo, int32 MaxAmmo);
 
 	void ActivateRageMode();
 	void DeactivateRageMode();

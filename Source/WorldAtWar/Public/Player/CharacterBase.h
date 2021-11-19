@@ -62,6 +62,11 @@ protected:
 	bool Server_SwitchWeapon_Validate(AWeaponBase* NewWeapon);
 	void Server_SwitchWeapon_Implementation(AWeaponBase* NewWeapon);
 
+	UFUNCTION(Client, Reliable, WithValidation)
+	void Client_SwitchWeapon(AWeaponBase* NewWeapon);
+	bool Client_SwitchWeapon_Validate(AWeaponBase* NewWeapon);
+	void Client_SwitchWeapon_Implementation(AWeaponBase* NewWeapon);
+
 	UPROPERTY(BlueprintReadWrite)
 	int32 WeaponIndex;
 

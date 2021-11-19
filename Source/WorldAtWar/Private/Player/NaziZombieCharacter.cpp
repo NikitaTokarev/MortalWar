@@ -243,6 +243,7 @@ void ANaziZombieCharacter::Server_EquipWeapon_Implementation(AWeaponBase* NewWea
 
 
 
+
 void ANaziZombieCharacter::SetInteractionObject()
 {
 	FVector Start = GetFirstPersonCameraComponent()->GetComponentLocation();
@@ -325,7 +326,7 @@ void ANaziZombieCharacter::IncrementRage(float Value)
 
 	if (Rage != PreviousRage)
 	{
-		OnRageChanged.Broadcast(Rage);		
+		Client_ChangeRage(Rage);
 	}	
 }
 
@@ -339,9 +340,31 @@ void ANaziZombieCharacter::DecrementRage()
 	{
 		DisableRageMode();
 		OnRageFinished.Broadcast();
-		GetWorldTimerManager().ClearTimer(DecrementRageHandle);
-		Client_DisableRageMode();
+		GetWorldTimerManager().ClearTimer(DecrementRageHandle);		
 	}
+}
+
+
+
+bool ANaziZombieCharacter::Client_ChangeRage_Validate(float NewRage)
+{
+	return true;
+}
+
+void ANaziZombieCharacter::Client_ChangeRage_Implementation(float NewRage)
+{
+	OnRageChanged.Broadcast(NewRage);
+}
+
+
+
+void ANaziZombieCharacter::EnableRageMode()
+{
+	for (auto& It : WeaponArray)
+	{
+		It->CallAmmoChangedDelegate(999, 999);
+	}
+	Server_EnableRageMode();
 }
 
 
@@ -380,6 +403,17 @@ void ANaziZombieCharacter::DisableRageMode()
 		It->DeactivateRageMode();
 	}
 	Knife->DeactivateRageMode();
+
+	if (UBlueprintFunctionLibrary_Misc::IsOnline(this))
+	{
+		FTimerHandle TempHandle;
+		GetWorldTimerManager().SetTimer(TempHandle, this, &ANaziZombieCharacter::Client_DisableRageMode, 0.75f, false);
+	}
+	else
+	{
+		Client_DisableRageMode();
+	}
+	
 }
 
 
@@ -391,5 +425,13 @@ bool ANaziZombieCharacter::Client_DisableRageMode_Validate()
 
 void ANaziZombieCharacter::Client_DisableRageMode_Implementation()
 {
-	OnRageFinished.Broadcast();
+	if (!HasAuthority())
+	{
+		OnRageFinished.Broadcast();
+	}
+	
+	for (auto& It : WeaponArray)
+	{
+		It->CallAmmoChangedDelegate(It->GetCurrentAmmo()[0], It->GetCurrentAmmo()[1]);
+	}
 }

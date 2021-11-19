@@ -115,6 +115,21 @@ void ACharacterBase::Server_SwitchWeapon_Implementation(AWeaponBase* NewWeapon)
 {
 	CurrentWeapon = NewWeapon;
 	OnRep_AttachWeapon();
+
+	if (!IsLocallyControlled())
+	{
+		Client_SwitchWeapon(NewWeapon);
+	}
+}
+
+bool ACharacterBase::Client_SwitchWeapon_Validate(AWeaponBase* NewWeapon)
+{
+	return true;
+}
+
+void ACharacterBase::Client_SwitchWeapon_Implementation(AWeaponBase* NewWeapon)
+{
+	OnWeaponChanged.Broadcast();
 }
 
 

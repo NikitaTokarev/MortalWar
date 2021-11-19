@@ -15,6 +15,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractChanged, const FString&, On
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHealthChanged, float, NewHealth);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRageChanged, float, NewRage);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDeathDelegate);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FKnifeAttackDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRageModeFinished);
 
@@ -45,7 +46,7 @@ protected:
 	FTimerHandle DecrementRageHandle;
 
 	UFUNCTION()
-	void OnRep_HealthChanged();
+	void OnRep_HealthChanged();	
 
 	UPROPERTY(BlueprintAssignable)
 	FHealthChanged OnHealthChanged;
@@ -105,7 +106,10 @@ protected:
 	bool Server_EquipWeapon_Validate(AWeaponBase* NewWeapon);
 	void Server_EquipWeapon_Implementation(AWeaponBase* NewWeapon);
 
-	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
+	UFUNCTION(BlueprintCallable)
+	void EnableRageMode();
+
+	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_EnableRageMode();
 	bool Server_EnableRageMode_Validate();
 	void Server_EnableRageMode_Implementation();
@@ -117,6 +121,11 @@ protected:
 
 	UFUNCTION()
 	void DisableRageMode();
+
+	UFUNCTION(Client, Reliable, WithValidation)
+	void Client_ChangeRage(float NewRage);
+	bool Client_ChangeRage_Validate(float NewRage);
+	void Client_ChangeRage_Implementation(float NewRage);
 
 	void SetInteractionObject();
 	

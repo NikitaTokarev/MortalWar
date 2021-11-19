@@ -51,6 +51,7 @@ void AWeaponBase::BeginPlay()
 
 	CurrentTotalAmmo = WeaponMaxAmmo;
 	CurrentMagazineAmmo = MagazineMaxAmmo;
+		
 
 	WeaponMesh->HideBoneByName(FName("emptyCase_1"), EPhysBodyOp::PBO_None);
 	WeaponMesh->HideBoneByName(FName("emptyCase_2"), EPhysBodyOp::PBO_None);
@@ -67,6 +68,7 @@ void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 
 	DOREPLIFETIME_CONDITION(AWeaponBase, CurrentTotalAmmo, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(AWeaponBase, CurrentMagazineAmmo, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(AWeaponBase, DelayBetweenShots, COND_OwnerOnly);
 }
 
 
@@ -213,6 +215,11 @@ bool AWeaponBase::Fire(ANaziZombieCharacter* ShootingPlayer)
 		bCanFire = false;
 		--CurrentMagazineAmmo;		
 
+		if (ShootingPlayer->IsLocallyControlled())
+		{
+			OnAmmoChanged.Broadcast(CurrentMagazineAmmo, CurrentTotalAmmo);
+		}
+
 		if (ShootingPlayer)
 		{
 			if (UAnimInstance* AnimInstance = ShootingPlayer->GetMesh1P()->GetAnimInstance())
@@ -330,7 +337,9 @@ bool AWeaponBase::Reload()
 		
 		float ReloadingDelay = 1.0f;
 
-		if (ANaziZombieCharacter* Player = Cast<ANaziZombieCharacter>(GetOwner()))
+		ANaziZombieCharacter* Player = Cast<ANaziZombieCharacter>(GetOwner());
+
+		if (Player)
 		{
 			if (UAnimInstance* AnimInstance = Player->GetMesh1P()->GetAnimInstance())
 			{
@@ -366,6 +375,12 @@ bool AWeaponBase::Reload()
 			CurrentMagazineAmmo += CurrentTotalAmmo;
 			CurrentTotalAmmo = 0;
 		}
+	
+		if (Player->IsLocallyControlled())
+		{
+			OnAmmoChanged.Broadcast(CurrentMagazineAmmo, CurrentTotalAmmo);
+		}
+
 		if (GetWorld()->IsServer())
 		{
 			Multi_Reload();
@@ -410,6 +425,13 @@ void AWeaponBase::RecoveryAmmo(int32 Amount, bool bFull)
 		UE_LOG(LogTemp, Error, TEXT("Ammo: %d"), CurrentMagazineAmmo);
 	}
 	
+}
+
+
+
+void AWeaponBase::CallAmmoChangedDelegate(int32 MagazineAmmo, int32 MaxAmmo)
+{
+	OnAmmoChanged.Broadcast(MagazineAmmo, MaxAmmo);
 }
 
 
