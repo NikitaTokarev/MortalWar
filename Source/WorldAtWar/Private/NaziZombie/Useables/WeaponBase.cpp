@@ -444,7 +444,7 @@ void AWeaponBase::ActivateRageMode()
 	BeforeRage_DelayBetweenShots = DelayBetweenShots;
 
 	MagazineMaxAmmo = CurrentMagazineAmmo = CurrentTotalAmmo = 999;
-	DelayBetweenShots /= 3;
+	DelayBetweenShots /= 4;
 }
 
 

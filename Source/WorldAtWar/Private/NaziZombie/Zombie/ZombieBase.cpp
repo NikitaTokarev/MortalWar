@@ -76,10 +76,11 @@ void AZombieBase::DecrementHealth(int16 InDamage)
 
 void AZombieBase::OnRep_Die()
 {
+	OnEnemyDeath.Broadcast();
+
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 	GetMesh()->SetSimulatePhysics(true);
-
 }
 
 

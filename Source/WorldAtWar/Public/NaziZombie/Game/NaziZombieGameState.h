@@ -27,7 +27,7 @@ public:
 	uint16 GetRoundNumber() const;
 	void IncrementRoundNumber();
 
-	void SetTotalZombiesRemaining(const uint16& ZombieCount) { TotalZombiesRemaining = ZombieCount; }
+	void SetTotalZombiesRemaining(const uint16& ZombieCount);
 	uint16 GetTotalZombiesRemaining() const { return TotalZombiesRemaining; }
 
 	void ZombieKilled();

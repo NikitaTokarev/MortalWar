@@ -10,6 +10,8 @@
 class ANaziZombieCharacter;
 class USoundWave;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDeath);
+
 
 UCLASS()
 class WORLDATWAR_API AZombieBase : public ACharacter
@@ -34,6 +36,9 @@ protected:
 	bool bIsDead;
 	UFUNCTION()
 	void OnRep_Die();
+
+	UPROPERTY(BlueprintAssignable)
+	FOnEnemyDeath OnEnemyDeath;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<UAnimMontage*> AttackMontages;

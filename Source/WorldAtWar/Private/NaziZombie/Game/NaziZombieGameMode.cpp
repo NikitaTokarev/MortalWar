@@ -33,14 +33,14 @@ void ANaziZombieGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	ZombieGameState = GetGameState<ANaziZombieGameState>();
-	CalculateZombieCount();
+	//CalculateZombieCount();
 
 	if (!GetWorld()) return;
 
 	TArray<AActor*> TempActors;
 
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ANaziZombieZombieSpawnPoint::StaticClass(), TempActors);
-	for (auto Actor : TempActors)
+	for (auto& Actor : TempActors)
 	{
 		if (ANaziZombieZombieSpawnPoint* SpawnPoint = Cast<ANaziZombieZombieSpawnPoint>(Actor))
 		{
@@ -68,6 +68,19 @@ void ANaziZombieGameMode::CalculateZombieCount()
 {
 	if (ZombieGameState)
 	{
+		if (ZombieGameState->GetTotalZombiesRemaining() >= 40)
+		{
+			if (TTimesUpHandle.IsValid())
+			{
+				GetWorldTimerManager().ClearTimer(TTimesUpHandle);
+			}
+			float Time = FMath::Min(30.0f + ZombieGameState->GetRoundNumber() * 45.0f, 240.0f);
+			GetWorldTimerManager().SetTimer(TTimesUpHandle, this, &ANaziZombieGameMode::TimesUp, Time, false);
+		
+
+			return;
+		}
+
 		uint16 RoundNumber = ZombieGameState->GetRoundNumber();
 		uint8 PlayerCount = ZombieGameState->PlayerArray.Num();
 		uint8 MaxZombiesOnMapAtOnce = 24;
@@ -79,17 +92,115 @@ void ANaziZombieGameMode::CalculateZombieCount()
 
 		if (RoundNumber > 0 && RoundNumber <= 5)
 		{
-			ZombiesRemaining = FMath::FloorToInt((RoundNumber * 0.2f) * MaxZombiesOnMapAtOnce);
+			ZombiesRemaining = FMath::FloorToInt((RoundNumber * 0.3f) * MaxZombiesOnMapAtOnce);
 		}
 		else
 		{
-			ZombiesRemaining = FMath::FloorToInt((RoundNumber * 0.15f) * MaxZombiesOnMapAtOnce);
+			ZombiesRemaining = FMath::FloorToInt((RoundNumber * 0.2f) * MaxZombiesOnMapAtOnce);
 		}
 		
+		ZombiesRemaining = FMath::Min(ZombiesRemaining, uint16(40 - ZombieGameState->GetTotalZombiesRemaining()));
+
 		ZombieGameState->SetTotalZombiesRemaining(ZombiesRemaining);
 		GetWorld()->GetTimerManager().UnPauseTimer(TZombieSpawnHandle);
 	}
 }
+
+
+
+void ANaziZombieGameMode::SpawnZombie()
+{
+	if (ZombiesRemaining > 0)
+	{
+		int RandomIndex = FMath::RandRange(0, ActiveZombieSpawnPoints.Num() - 1);
+
+		if (RandomIndex < 0) return;
+
+		if (auto SpawnPoint = ActiveZombieSpawnPoints[RandomIndex])
+		{
+			FVector Loc = SpawnPoint->GetActorLocation();
+			FRotator Rot = SpawnPoint->GetActorRotation();
+
+			if (AZombieBase* Zombie = GetWorld()->SpawnActor<AZombieBase>(ZombieClass, Loc, Rot))
+			{
+				--ZombiesRemaining;
+			}
+		}
+	}
+	else
+	{
+		GetWorld()->GetTimerManager().PauseTimer(TZombieSpawnHandle);
+
+		if (TTimesUpHandle.IsValid())
+		{
+			GetWorldTimerManager().ClearTimer(TTimesUpHandle);
+		}
+		float Time = FMath::Min(30.0f + ZombieGameState->GetRoundNumber() * 45.0f, 240.0f);
+
+		GetWorldTimerManager().SetTimer(TTimesUpHandle, this, &ANaziZombieGameMode::TimesUp, Time, false);
+	}	
+}
+
+
+
+
+
+void ANaziZombieGameMode::TimesUp()
+{
+	UE_LOG(LogTemp, Warning, TEXT("TIME'S UP"));
+
+	UE_LOG(LogTemp, Warning, TEXT("ROUND %d FINISHED"), ZombieGameState->GetRoundNumber());
+	ZombieGameState->IncrementRoundNumber();
+
+	CalculateZombieCount();
+}
+
+
+
+void ANaziZombieGameMode::NewZoneActive(uint8 ZoneNumber)
+{
+	UE_LOG(LogTemp, Warning, TEXT("SETTING ACTIVE ZONE: %d"), ZoneNumber);
+
+
+	for (int16 x = ZombieSpawnPoints.Num() - 1; x >= 0; --x)
+	{
+		ANaziZombieZombieSpawnPoint* SpawnPoint = ZombieSpawnPoints[x];
+
+		if (SpawnPoint && ZoneNumber == SpawnPoint->GetZone() && !SpawnPoint->IsActive())
+		{
+			ActiveZombieSpawnPoints.Add(SpawnPoint);
+			SpawnPoint->Activate();
+
+			ZombieSpawnPoints.RemoveAt(x);
+		}
+	}
+}
+
+
+
+void ANaziZombieGameMode::ZombieKilled()
+{
+	if (ZombieGameState)
+	{
+		ZombieGameState->ZombieKilled();
+		UE_LOG(LogTemp, Error, TEXT("Zombie Remaining: %u"), ZombieGameState->GetTotalZombiesRemaining());
+		if (ZombieGameState->GetTotalZombiesRemaining() == 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ROUND %d FINISHED"), ZombieGameState->GetRoundNumber());
+			ZombieGameState->IncrementRoundNumber();
+			FTimerHandle TempHandle;
+			GetWorldTimerManager().SetTimer(TempHandle, this, &ANaziZombieGameMode::CalculateZombieCount, 5.0f, false);
+
+			if (TTimesUpHandle.IsValid())
+			{
+				GetWorldTimerManager().ClearTimer(TTimesUpHandle);
+			}
+		}
+	}
+}
+
+
+///////////////////////////////////////// PLAYER ////////////////////////////////////////
 
 
 void ANaziZombieGameMode::SetSpawnPoints()
@@ -139,69 +250,6 @@ void ANaziZombieGameMode::PostLogin(APlayerController* NewPlayer)
 				SpawnPoint->SetUsed(true);
 				return;
 			}
-		}
-	}
-}
-
-
-
-void ANaziZombieGameMode::SpawnZombie()
-{
-	if (ZombiesRemaining > 0)
-	{
-		int RandomIndex = FMath::RandRange(0, ActiveZombieSpawnPoints.Num() - 1);
-
-		if (auto SpawnPoint = ActiveZombieSpawnPoints[RandomIndex])
-		{
-			FVector Loc = SpawnPoint->GetActorLocation();
-			FRotator Rot = SpawnPoint->GetActorRotation();
-
-			if (AZombieBase* Zombie = GetWorld()->SpawnActor<AZombieBase>(ZombieClass, Loc, Rot))
-			{
-				--ZombiesRemaining;
-			}
-		}
-	}
-	else
-	{
-		GetWorld()->GetTimerManager().PauseTimer(TZombieSpawnHandle);
-	}
-}
-
-void ANaziZombieGameMode::NewZoneActive(uint8 ZoneNumber)
-{
-	UE_LOG(LogTemp, Warning, TEXT("SETTING ACTIVE ZONE: %d"), ZoneNumber);
-
-
-	for (int16 x = ZombieSpawnPoints.Num() - 1; x >= 0; --x)
-	{
-		ANaziZombieZombieSpawnPoint* SpawnPoint = ZombieSpawnPoints[x];
-
-		if (SpawnPoint && ZoneNumber == SpawnPoint->GetZone() && !SpawnPoint->IsActive())
-		{
-			ActiveZombieSpawnPoints.Add(SpawnPoint);
-			SpawnPoint->Activate();
-
-			ZombieSpawnPoints.RemoveAt(x);
-		}
-	}
-}
-
-
-
-void ANaziZombieGameMode::ZombieKilled()
-{
-	if (ZombieGameState)
-	{
-		ZombieGameState->ZombieKilled();
-		UE_LOG(LogTemp, Error, TEXT("Zombie Remaining: %u"), ZombieGameState->GetTotalZombiesRemaining());
-		if (ZombieGameState->GetTotalZombiesRemaining() == 0)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("ROUND %d FINISHED"), ZombieGameState->GetRoundNumber());
-			ZombieGameState->IncrementRoundNumber();
-			FTimerHandle TempHandle;
-			GetWorldTimerManager().SetTimer(TempHandle, this, &ANaziZombieGameMode::CalculateZombieCount, 5.0f, false);
-
 		}
 	}
 }

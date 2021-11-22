@@ -37,12 +37,15 @@ protected:
 		TSubclassOf<AZombieBase> ZombieClass;
 
 	FTimerHandle TZombieSpawnHandle;
+	FTimerHandle TTimesUpHandle;
 
 	uint16 ZombiesRemaining;
 
 protected:
 	void CalculateZombieCount();
 	void SpawnZombie();
+
+	void TimesUp();
 
 protected:
 	virtual void BeginPlay() override;

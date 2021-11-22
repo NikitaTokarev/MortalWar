@@ -177,6 +177,9 @@ public:
 	// 1 - MagazineAmmo, 2 - TotalAmmo
 	TArray<int32> GetCurrentAmmo() const;
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	int32 GetMaxMagazineAmmo() const { return MagazineMaxAmmo; }
+
 	UAnimMontage* GetFPSAnimMontage() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
@@ -192,6 +195,7 @@ public:
 	float GetRageForKilling() const { return WeaponDamage.RageForKilling; }
 	float GetRageForHeadshot() const { return WeaponDamage.RageForHeadshot; }
 
+	UFUNCTION(BlueprintCallable)
 	void RecoveryAmmo(int32 Amount, bool bFull = false);
 
 	void SetCanFire(bool _bCanFire) { bCanFire = _bCanFire; }	
@@ -203,4 +207,5 @@ public:
 
 	void ActivateRageMode();
 	void DeactivateRageMode();
+	
 };
