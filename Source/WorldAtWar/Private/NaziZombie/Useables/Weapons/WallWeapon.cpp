@@ -17,10 +17,24 @@ AWallWeapon::AWallWeapon()
 	WallWeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>("StaticMeshComponent");
 	SetRootComponent(WallWeaponMesh);
 
+	ObjectName = FText::FromString("M1 Carbine");
+	Cost = 500;
+
 	RespawnTime = 5.0f;
 }
 
 
+void AWallWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+	SetReplicates(true);
+
+	//UIMessage += ObjectName + "[Cost: " + FString::FromInt(Cost) + "]";
+
+	const FString ResultMessage = UIMessage.ToString() + ObjectName.ToString() + "[Cost: " + FString::FromInt(Cost) + "]";
+
+	UIMessage = FText::FromString(ResultMessage);
+}
 
 
 

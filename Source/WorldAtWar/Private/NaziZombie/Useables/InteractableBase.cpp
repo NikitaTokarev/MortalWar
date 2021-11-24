@@ -12,8 +12,8 @@ AInteractableBase::AInteractableBase()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;	
 
-	ObjectName = "Default";
-	UIMessage = "Press F to buy ";	
+	ObjectName = FText::FromString("Object");
+	UIMessage = FText::FromString("Two-finger touch to interact with ");	
 
 	bIsUsed = false;
 
@@ -32,7 +32,11 @@ void AInteractableBase::BeginPlay()
 	
 	SetReplicates(true);
 
-	UIMessage += ObjectName + "[Cost: " + FString::FromInt(Cost) + "]";
+	//UIMessage += ObjectName + "[Cost: " + FString::FromInt(Cost) + "]";
+
+	const FString ResultMessage = UIMessage.ToString() + ObjectName.ToString() + "[Cost: " + FString::FromInt(Cost) + "]";
+
+	UIMessage.FromString(ResultMessage);
 }
 
 void AInteractableBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

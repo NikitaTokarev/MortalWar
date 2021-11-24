@@ -20,10 +20,10 @@ public:
 protected:
 
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
-	FString ObjectName;
+	FText ObjectName;
 
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
-	FString UIMessage;
+	FText UIMessage;
 
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
 	uint16 Cost;
@@ -40,7 +40,7 @@ protected:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeTimeProps) const override;
 
 public:
-	FString GetUIMessage() const { return UIMessage; }
+	FText GetUIMessage() const { return UIMessage; }
 
 	virtual void Use(ANaziZombieCharacter* Player);
 	virtual bool GetIsUsed() const { return bIsUsed; }

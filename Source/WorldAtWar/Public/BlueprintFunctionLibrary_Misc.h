@@ -27,5 +27,5 @@ public:
 		if (!Object || !Object->GetWorld()) return false;
 
 		return (Object->GetWorld()->GetGameState()->PlayerArray.Num() > 1);
-	}
+	}	
 };

@@ -21,7 +21,10 @@ protected:
 	UStaticMeshComponent* MeshComp;
 
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
-	FTransform Destination;
+	FVector DestinationLocation;
+
+	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
+	FRotator DestinationRotation;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnPortalUsed OnPortalUsed;

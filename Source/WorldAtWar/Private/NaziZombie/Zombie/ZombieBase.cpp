@@ -273,6 +273,7 @@ void AZombieBase::Hit_Knife(ANaziZombieCharacter* Player, float BaseDamage, floa
 
 
 
+
 bool AZombieBase::Multi_PlaySound_Validate(USoundWave* Sound) const
 {
 	return true;
@@ -291,4 +292,27 @@ void AZombieBase::Multi_PlaySound_Implementation(USoundWave* Sound) const
 USoundWave* AZombieBase::GetRandomSound(TArray<USoundWave*> Sounds) const
 {
 	return Sounds[FMath::RandRange(0, Sounds.Num() - 1)];
+}
+
+
+
+
+void AZombieBase::ActivateBuff(float ActiveTime, bool bIsEternal)
+{
+	Health *= 1.5;
+	Damage *= 1.33;
+
+	if (!bIsEternal && GetWorld())
+	{
+		FTimerHandle TempHandle;
+		GetWorldTimerManager().SetTimer(TempHandle, this, &AZombieBase::DeactivateBuff, ActiveTime, false);
+	}
+}
+
+
+
+void AZombieBase::DeactivateBuff()
+{
+	Health /= 1.5;
+	Damage /= 1.33;
 }

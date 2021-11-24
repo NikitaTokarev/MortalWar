@@ -19,3 +19,4 @@ void UBlueprintFunctionLibrary_Misc::ToggleSoundClassVolume(USoundClass* SoundCl
 
 	SoundClass->Properties.Volume = bIsOn ? 1.0f : 0.0f;
 }
+

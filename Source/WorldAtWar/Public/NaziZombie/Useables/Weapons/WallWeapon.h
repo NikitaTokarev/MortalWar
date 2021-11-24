@@ -30,6 +30,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
 	float RespawnTime;
 
+	virtual void BeginPlay() override;
 	virtual void OnRep_ObjectUsed() override;
 
 	void SetObjectCanBeUsed();

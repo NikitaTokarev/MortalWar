@@ -18,6 +18,8 @@ ABarricade::ABarricade()
 	CollisionMesh = CreateDefaultSubobject<UStaticMeshComponent>("StaticMeshComponent");
 	//CollisionMesh->SetupAttachment(MeshComp);
 
+	ObjectName = FText::FromString("Door");
+
 	/*bIsUsed = false;
 
 	Cost = 500;*/
@@ -33,7 +35,11 @@ void ABarricade::BeginPlay()
 	Super::BeginPlay();
 	SetReplicates(true);
 		
-	UIMessage += ObjectName + "[Cost: " + FString::FromInt(Cost) + "]";
+	//UIMessage += ObjectName + "[Cost: " + FString::FromInt(Cost) + "]";
+
+	const FString ResultMessage = UIMessage.ToString() + ObjectName.ToString() + "[Cost: " + FString::FromInt(Cost) + "]";
+
+	UIMessage = FText::FromString(ResultMessage);
 }
 
 

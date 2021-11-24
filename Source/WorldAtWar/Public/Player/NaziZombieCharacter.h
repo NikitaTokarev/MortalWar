@@ -11,13 +11,14 @@ class AInteractableBase;
 class AWeaponBase;
 class UAnimMontage;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractChanged, const FString&, OnInteractChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractChanged, const FText&, OnInteractChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHealthChanged, float, NewHealth);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRageChanged, float, NewRage);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDeathDelegate);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FKnifeAttackDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRageModeFinished);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEquipNewWeapon, class AWeaponBase*, NewWeapon);
 
 UCLASS()
 class WORLDATWAR_API ANaziZombieCharacter : public ACharacterBase
@@ -68,13 +69,15 @@ protected:
 
 	UPROPERTY(BlueprintAssignable)
 	FRageChanged OnRageChanged;		
-	
 
 	UPROPERTY(BlueprintAssignable)
 	FInteractChanged OnInteractChanged;
 
 	UPROPERTY(BlueprintAssignable)
 	FKnifeAttackDelegate OnKnifing;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnEquipNewWeapon OnEquipNewWeapon;
 
 	FTimerHandle TInteractTimerHandle;
 
@@ -100,6 +103,11 @@ protected:
 	void Server_Interact(AInteractableBase* InteractingObject);
 	bool Server_Interact_Validate(AInteractableBase* InteractingObject);
 	void Server_Interact_Implementation(AInteractableBase* InteractingObject);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_RecoveryHealth(float HealthAmount);
+	bool Server_RecoveryHealth_Validate(float HealthAmount);
+	void Server_RecoveryHealth_Implementation(float HealthAmount);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_EquipWeapon(AWeaponBase* NewWeapon);
@@ -165,4 +173,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE	bool GetIsDead() const { return bIsDead; }
 	
+	bool IsFullHealth() const { return Health == MaxHealth; }
+
+	void RecoveryHealth(float HealthAmount);
 };

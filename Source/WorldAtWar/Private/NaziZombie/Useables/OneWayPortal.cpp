@@ -3,6 +3,7 @@
 
 #include "NaziZombie/Useables/OneWayPortal.h"
 #include "Player/NaziZombieCharacter.h"
+#include "GameFramework/Controller.h"
 
 #include "Components/StaticMeshComponent.h"
 
@@ -12,9 +13,8 @@ AOneWayPortal::AOneWayPortal()
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("MeshComponent");
 	RootComponent = MeshComp;
 
-	Cost = 0;
-
-	Destination.SetScale3D(FVector(1.0f));
+	ObjectName = FText::FromString("Portal");
+	Cost = 0;	
 }
 
 
@@ -25,12 +25,26 @@ void AOneWayPortal::BeginPlay()
 
 	SetReplicates(true);
 
-	UIMessage += ObjectName + "[Cost: " + FString::FromInt(Cost) + "]";
+	if (Cost != 0)
+	{
+		const FString ResultMessage = UIMessage.ToString() + ObjectName.ToString() + "[Cost: " + FString::FromInt(Cost) + "]";
+
+		UIMessage = FText::FromString(ResultMessage);
+	}
+	else
+	{
+		const FString ResultMessage = "Two-finger touch to use " + ObjectName.ToString();
+
+		UIMessage = FText::FromString(ResultMessage);
+	}
+		
 }
 
 
 void AOneWayPortal::Use(ANaziZombieCharacter* Player)
 {
-	Player->SetActorLocationAndRotation(Destination.GetLocation(), Destination.GetRotation());
+	Player->SetActorLocation(DestinationLocation);	
+	Player->GetController()->SetControlRotation(DestinationRotation);	
+
 	OnPortalUsed.Broadcast();
 }

@@ -68,10 +68,15 @@ protected:
 
 	USoundWave* GetRandomSound(TArray<USoundWave*> Sounds) const;
 
+	void DeactivateBuff();
+
 public:
 	void Hit(ANaziZombieCharacter* Player, FHitResult HitResult);
 	void Hit_Knife(ANaziZombieCharacter* Player, float BaseDamage, float RageForKilling);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	float GetDamage() const { return Damage; }
+
+	UFUNCTION(BlueprintCallable)
+	void ActivateBuff(float ActiveTime, bool bIsEternal = false);
 };

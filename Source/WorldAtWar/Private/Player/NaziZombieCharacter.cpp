@@ -138,9 +138,7 @@ void ANaziZombieCharacter::OnRep_KnifeAttached()
 	else
 	{
 		Knife->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_knifeHolster"));
-	}
-
-
+	}	
 }
 
 
@@ -156,6 +154,7 @@ void ANaziZombieCharacter::EquipWeapon(AWeaponBase* NewWeapon)
 		else
 		{
 			WeaponArray.Add(NewWeapon);
+			OnEquipNewWeapon.Broadcast(NewWeapon);
 		}
 		CurrentWeapon = NewWeapon;
 		OnRep_AttachWeapon();
@@ -198,7 +197,6 @@ AWeaponBase* ANaziZombieCharacter::CheckWeaponClass(TSubclassOf<AWeaponBase> Wea
 
 
 
-
 void ANaziZombieCharacter::Interact()
 {
 	if (Interactable && !Interactable->GetIsUsed() && !bIsDead)
@@ -230,6 +228,9 @@ void ANaziZombieCharacter::Server_Interact_Implementation(AInteractableBase* Int
 	}
 }
 
+
+
+
 bool ANaziZombieCharacter::Server_EquipWeapon_Validate(AWeaponBase* NewWeapon)
 {
 	return true;
@@ -239,8 +240,6 @@ void ANaziZombieCharacter::Server_EquipWeapon_Implementation(AWeaponBase* NewWea
 {
 	EquipWeapon(NewWeapon);
 }
-
-
 
 
 
@@ -269,7 +268,7 @@ void ANaziZombieCharacter::SetInteractionObject()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("IS NOW A NULL PTR"));
 		Interactable = nullptr;
-		OnInteractChanged.Broadcast(FString());
+		OnInteractChanged.Broadcast(FText());
 	}
 
 }
@@ -434,4 +433,34 @@ void ANaziZombieCharacter::Client_DisableRageMode_Implementation()
 	{
 		It->CallAmmoChangedDelegate(It->GetCurrentAmmo()[0], It->GetCurrentAmmo()[1]);
 	}
+}
+
+
+
+
+void ANaziZombieCharacter::RecoveryHealth(float HealthAmount)
+{
+	if (HasAuthority())
+	{
+		Health = FMath::Min(Health + HealthAmount, MaxHealth);
+		OnRep_HealthChanged();
+	}
+	else
+	{
+		Server_RecoveryHealth(HealthAmount);
+	}
+}
+
+
+
+bool ANaziZombieCharacter::Server_RecoveryHealth_Validate(float HealthAmount)
+{
+	return true;
+}
+
+
+
+void ANaziZombieCharacter::Server_RecoveryHealth_Implementation(float HealthAmount)
+{
+	RecoveryHealth(HealthAmount);
 }
