@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Player/CharacterBase.h"
+#include "WorldAtWar/Public/WWCoreTypes.h"
 #include "NaziZombieCharacter.generated.h"
 
 class UInputComponent;
@@ -109,6 +110,11 @@ protected:
 	bool Server_RecoveryHealth_Validate(float HealthAmount);
 	void Server_RecoveryHealth_Implementation(float HealthAmount);
 
+	UFUNCTION(Client, Reliable, WithValidation)
+	void Client_OnReload();
+	bool Client_OnReload_Validate();
+	void Client_OnReload_Implementation();
+
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_EquipWeapon(AWeaponBase* NewWeapon);
 	bool Server_EquipWeapon_Validate(AWeaponBase* NewWeapon);
@@ -150,6 +156,9 @@ protected:
 	UFUNCTION()
 	void DecrementRage();
 
+	UFUNCTION()
+	void UpdateAmmoAfterPickup_Client(class AWeaponBase* Weapon, int32 AmmoAmount);
+
 protected:
 	virtual void BeginPlay() override;	
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;		
@@ -174,6 +183,9 @@ public:
 	FORCEINLINE	bool GetIsDead() const { return bIsDead; }
 	
 	bool IsFullHealth() const { return Health == MaxHealth; }
+	bool IsFullRage() const { return Rage == MaxRage; }
+	bool NeedAmmo(TEnumAsByte<EWeaponID> AmmoType) const;
 
 	void RecoveryHealth(float HealthAmount);
+	void RecoveryAmmo(TEnumAsByte<EWeaponID> AmmoType, int32 AmmoAmount);
 };

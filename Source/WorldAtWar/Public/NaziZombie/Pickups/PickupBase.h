@@ -29,7 +29,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
 	TArray<AActor*> RespawnPoints;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Nazi Zombie Settings")
+	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
+	bool bIsRespawnables = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Nazi Zombie Settings", meta = (EditCondition = "bIsRespawnables"))
 	float RespawnTime = 5.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Nazi Zombie Settings")
@@ -41,24 +44,23 @@ protected:
 	virtual bool CanTakePickup(class ANaziZombieCharacter* Player);
 	virtual void GivePickupTo(class ANaziZombieCharacter* Player);
 
-public:
-	virtual void Tick(float DeltaTime) override;
+public:	
 	bool CouldBeTaken() const;
 
-private:
-	float RotationYaw = 0.0f;
+private:	
 	FTimerHandle RespawnTimerHandle;	
 
-	void PickupWasTaken();
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+	void Multi_PickupWasTaken();
+	bool Multi_PickupWasTaken_Validate();
+	void Multi_PickupWasTaken_Implementation();
 
 	void GetNextRespawnLocation();
 
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
-	void Multi_Respawn(const FVector& Location);
-	bool Multi_Respawn_Validate(const FVector& Location);
-	void Multi_Respawn_Implementation(const FVector& Location);
-
-	void GenerateRotationYaw();
+	void Multi_Respawn();
+	bool Multi_Respawn_Validate();
+	void Multi_Respawn_Implementation();	
 
 	void EnableCollision();
 

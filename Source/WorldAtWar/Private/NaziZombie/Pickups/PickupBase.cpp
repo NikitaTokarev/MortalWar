@@ -13,7 +13,7 @@
 APickupBase::APickupBase()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	CollisionComponent = CreateDefaultSubobject<USphereComponent>("SphereComponent");
 	CollisionComponent->InitSphereRadius(50.0f);
@@ -38,22 +38,16 @@ void APickupBase::BeginPlay()
 		SetReplicates(true);
 		SetReplicateMovement(true);
 
-		if (RespawnPoints.Num() == 0) return;
-
-		const FVector NewLocation = RespawnPoints[FMath::RandRange(0, RespawnPoints.Num() - 1)]->GetActorLocation();
-		SetActorLocation(NewLocation);
+		if (RespawnPoints.Num() != 0)
+		{
+			const FVector NewLocation = RespawnPoints[FMath::RandRange(0, RespawnPoints.Num() - 1)]->GetActorLocation();
+			SetActorLocation(NewLocation);
+		}		
 	}
-
-	GenerateRotationYaw();
+	
 	
 }
 
-void APickupBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	AddActorLocalRotation(FRotator(0.0f, RotationYaw, 0.0f));
-}
 
 
 bool APickupBase::CouldBeTaken() const
@@ -64,19 +58,16 @@ bool APickupBase::CouldBeTaken() const
 
 void APickupBase::NotifyActorBeginOverlap(AActor* OtherActor)
 {
-	
+	if (HasAuthority())
+	{
 		const auto Player = Cast<ANaziZombieCharacter>(OtherActor);
 		if (Player && CanTakePickup(Player))
 		{
-			PickupWasTaken();
-			if (HasAuthority())
-			{
-				GivePickupTo(Player);
-			}			
+			Multi_PickupWasTaken();
+			GivePickupTo(Player);
 		}
-
 		Super::NotifyActorBeginOverlap(OtherActor);
-	
+	}		
 }
 
 bool APickupBase::CanTakePickup(ANaziZombieCharacter* Player)
@@ -89,7 +80,16 @@ void APickupBase::GivePickupTo(ANaziZombieCharacter* Player)
 
 }
 
-void APickupBase::PickupWasTaken()
+
+
+bool APickupBase::Multi_PickupWasTaken_Validate()
+{
+	return true;
+}
+
+
+
+void APickupBase::Multi_PickupWasTaken_Implementation()
 {
 	CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	if (GetRootComponent())
@@ -99,7 +99,14 @@ void APickupBase::PickupWasTaken()
 
 	if (HasAuthority())
 	{
-		GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &APickupBase::GetNextRespawnLocation, RespawnTime);
+		if (bIsRespawnables)
+		{
+			GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &APickupBase::GetNextRespawnLocation, RespawnTime);
+		}
+		else
+		{
+			Destroy();
+		}
 	}
 	
 
@@ -110,24 +117,24 @@ void APickupBase::PickupWasTaken()
 
 void APickupBase::GetNextRespawnLocation()
 {
-	if (RespawnPoints.Num() == 0) return;
+	if (RespawnPoints.Num() != 0)
+	{
+		const FVector NewLocation = RespawnPoints[FMath::RandRange(0, RespawnPoints.Num() - 1)]->GetActorLocation();
+		SetActorLocation(NewLocation);
+	}	
 
-	const FVector NewLocation = RespawnPoints[FMath::RandRange(0, RespawnPoints.Num() - 1)]->GetActorLocation();
-	SetActorLocation(NewLocation);
-
-	Multi_Respawn(NewLocation);
+	Multi_Respawn();
 }
 
 
 
-bool APickupBase::Multi_Respawn_Validate(const FVector& Location)
+bool APickupBase::Multi_Respawn_Validate()
 {
 	return true;
 }
 
-void APickupBase::Multi_Respawn_Implementation(const FVector& Location)
-{
-	GenerateRotationYaw();	
+void APickupBase::Multi_Respawn_Implementation()
+{	
 	if (GetRootComponent())
 	{
 		GetRootComponent()->SetVisibility(true, true);		
@@ -140,10 +147,4 @@ void APickupBase::Multi_Respawn_Implementation(const FVector& Location)
 void APickupBase::EnableCollision()
 {
 	CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
-}
-
-void APickupBase::GenerateRotationYaw()
-{
-	const auto Direction = FMath::RandBool() ? 1.0f : -1.0f;
-	RotationYaw = FMath::RandRange(1.0f, 2.0f) * Direction;
 }

@@ -345,6 +345,7 @@ void ANaziZombieCharacter::DecrementRage()
 
 
 
+
 bool ANaziZombieCharacter::Client_ChangeRage_Validate(float NewRage)
 {
 	return true;
@@ -361,7 +362,7 @@ void ANaziZombieCharacter::EnableRageMode()
 {
 	for (auto& It : WeaponArray)
 	{
-		It->CallAmmoChangedDelegate(999, 999);
+		It->Client_CallAmmoChangedDelegate(999, 999);
 	}
 	Server_EnableRageMode();
 }
@@ -431,9 +432,11 @@ void ANaziZombieCharacter::Client_DisableRageMode_Implementation()
 	
 	for (auto& It : WeaponArray)
 	{
-		It->CallAmmoChangedDelegate(It->GetCurrentAmmo()[0], It->GetCurrentAmmo()[1]);
+		It->Client_CallAmmoChangedDelegate(It->GetCurrentAmmo()[0], It->GetCurrentAmmo()[1]);
 	}
 }
+
+
 
 
 
@@ -453,6 +456,8 @@ void ANaziZombieCharacter::RecoveryHealth(float HealthAmount)
 
 
 
+
+
 bool ANaziZombieCharacter::Server_RecoveryHealth_Validate(float HealthAmount)
 {
 	return true;
@@ -463,4 +468,109 @@ bool ANaziZombieCharacter::Server_RecoveryHealth_Validate(float HealthAmount)
 void ANaziZombieCharacter::Server_RecoveryHealth_Implementation(float HealthAmount)
 {
 	RecoveryHealth(HealthAmount);
+}
+
+
+
+
+bool ANaziZombieCharacter::Client_OnReload_Validate()
+{
+	return true;
+}
+
+
+
+void ANaziZombieCharacter::Client_OnReload_Implementation()
+{
+	if (CurrentWeapon && !bIsDead)
+	{
+		CurrentWeapon->Reload(false);
+	}
+}
+
+
+
+
+bool ANaziZombieCharacter::NeedAmmo(TEnumAsByte<EWeaponID> AmmoType) const
+{
+	if (bIsRage) return false;
+
+	switch (AmmoType)
+	{
+	case EWeaponID::Colt1911:
+		return !WeaponArray[0]->IsFullAmmo();
+
+	case EWeaponID::M1Carbine:
+		if (!WeaponArray.IsValidIndex(1)) return false;
+		return !WeaponArray[1]->IsFullAmmo();
+
+	case EWeaponID::STG44:
+		return false;
+
+	default:
+		return false;
+	}
+}
+
+
+void ANaziZombieCharacter::RecoveryAmmo(TEnumAsByte<EWeaponID> AmmoType, int32 AmmoAmount)
+{
+	switch (AmmoType)
+	{
+	case EWeaponID::Colt1911:
+		if (CurrentWeapon == WeaponArray[0])
+		{			
+			Client_OnReload();			
+		}
+
+
+		if (IsLocallyControlled())
+		{
+			WeaponArray[0]->RecoveryAmmo(AmmoAmount);
+		}
+		else
+		{
+			FTimerHandle TimerHandle;
+			FTimerDelegate TimerDelegate = FTimerDelegate::CreateUObject(this, &ANaziZombieCharacter::UpdateAmmoAfterPickup_Client,
+				WeaponArray[0], AmmoAmount);
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 0.5f, false);
+		}
+		
+		return;
+
+	case EWeaponID::M1Carbine:
+		if (!WeaponArray.IsValidIndex(1)) return;
+
+		if (CurrentWeapon == WeaponArray[1])
+		{			
+			Client_OnReload();			
+		}
+
+
+		if (IsLocallyControlled())
+		{
+			WeaponArray[1]->RecoveryAmmo(AmmoAmount);
+		}
+		else
+		{
+			FTimerHandle TimerHandle;
+			FTimerDelegate TimerDelegate = FTimerDelegate::CreateUObject(this, &ANaziZombieCharacter::UpdateAmmoAfterPickup_Client,
+				WeaponArray[1], AmmoAmount);
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 0.5f, false);
+		}
+		
+		return;
+
+	case EWeaponID::STG44:
+		return;
+
+	default:
+		return;
+	}
+}
+
+
+void ANaziZombieCharacter::UpdateAmmoAfterPickup_Client(AWeaponBase* Weapon, int32 AmmoAmount)
+{
+	Weapon->RecoveryAmmo(AmmoAmount);
 }

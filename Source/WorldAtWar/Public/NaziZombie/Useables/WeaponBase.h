@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "WorldAtWar/Public/WWCoreTypes.h"
 #include "WeaponBase.generated.h"
 
 class USkeletalMeshComponent;
@@ -22,13 +23,13 @@ enum EHitLocation
 };
 
 
-UENUM(BlueprintType)
-enum EWeaponID
-{
-	Colt1911 UMETA(DisplayName, "1911"),
-	M1Carbine UMETA(DisplayName, "M1Carbine"),
-	STG44 UMETA(DisplayName, "STG44")
-};
+//UENUM(BlueprintType)
+//enum EWeaponID
+//{
+//	Colt1911 UMETA(DisplayName, "1911"),
+//	M1Carbine UMETA(DisplayName, "M1Carbine"),
+//	STG44 UMETA(DisplayName, "STG44")
+//};
 
 
 USTRUCT(BlueprintType)
@@ -158,21 +159,21 @@ protected:
 	virtual void Multi_Fire_Implementation(const FHitResult& HitResult);
 
 	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_Reload();
-	bool Server_Reload_Validate();
-	virtual void Server_Reload_Implementation();
+	void Server_Reload(bool bMustUpdateInfo = true);
+	bool Server_Reload_Validate(bool bMustUpdateInfo = true);
+	virtual void Server_Reload_Implementation(bool bMustUpdateInfo = true);
 
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
-	void Multi_Reload();
-	bool Multi_Reload_Validate();
-	virtual void Multi_Reload_Implementation();
+	void Multi_Reload(bool bMustUpdateInfo = true);
+	bool Multi_Reload_Validate(bool bMustUpdateInfo = true);
+	virtual void Multi_Reload_Implementation(bool bMustUpdateInfo = true);
 
 
 public:
 	virtual bool Fire(ANaziZombieCharacter* ShootingPlayer);
 	FWeaponDamage GetWeaponDamage() const { return WeaponDamage; }
 
-	virtual bool Reload();
+	virtual bool Reload(bool bMustUpdateInfo = true);
 
 	// 1 - MagazineAmmo, 2 - TotalAmmo
 	TArray<int32> GetCurrentAmmo() const;
@@ -203,9 +204,13 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	UTexture2D* GetWeaponIcon() const { return WeaponIcon; }
 
-	void CallAmmoChangedDelegate(int32 MagazineAmmo, int32 MaxAmmo);
+	UFUNCTION(Client, Reliable, WithValidation)
+	void Client_CallAmmoChangedDelegate(int32 MagazineAmmo, int32 MaxAmmo);
+	bool Client_CallAmmoChangedDelegate_Validate(int32 MagazineAmmo, int32 MaxAmmo);
+	void Client_CallAmmoChangedDelegate_Implementation(int32 MagazineAmmo, int32 MaxAmmo);
 
 	void ActivateRageMode();
 	void DeactivateRageMode();
 	
+	bool IsFullAmmo() const { return CurrentTotalAmmo == WeaponMaxAmmo && CurrentMagazineAmmo == MagazineMaxAmmo; }
 };

@@ -291,24 +291,24 @@ bool AWeaponBase::Fire(ANaziZombieCharacter* ShootingPlayer)
 
 
 
-bool AWeaponBase::Server_Reload_Validate()
+bool AWeaponBase::Server_Reload_Validate(bool bMustUpdateInfo)
 {
 	return true;
 }
 
 
 
-void AWeaponBase::Server_Reload_Implementation()
+void AWeaponBase::Server_Reload_Implementation(bool bMustUpdateInfo)
 {
 	Reload();	
 }
 
-bool AWeaponBase::Multi_Reload_Validate()
+bool AWeaponBase::Multi_Reload_Validate(bool bMustUpdateInfo)
 {
 	return true;
 }
 
-void AWeaponBase::Multi_Reload_Implementation()
+void AWeaponBase::Multi_Reload_Implementation(bool bMustUpdateInfo)
 {
 	if (ANaziZombieCharacter* Character = Cast<ANaziZombieCharacter>(GetOwner()))
 	{
@@ -329,7 +329,7 @@ void AWeaponBase::Multi_Reload_Implementation()
 
 
 
-bool AWeaponBase::Reload()
+bool AWeaponBase::Reload(bool bMustUpdateInfo)
 {
 	if (CurrentTotalAmmo > 0 && CurrentMagazineAmmo != MagazineMaxAmmo && bCanFire)
 	{
@@ -376,7 +376,7 @@ bool AWeaponBase::Reload()
 			CurrentTotalAmmo = 0;
 		}
 	
-		if (Player->IsLocallyControlled())
+		if (Player->IsLocallyControlled() && bMustUpdateInfo)
 		{
 			OnAmmoChanged.Broadcast(CurrentMagazineAmmo, CurrentTotalAmmo);
 		}
@@ -421,16 +421,35 @@ void AWeaponBase::RecoveryAmmo(int32 Amount, bool bFull)
 	}
 	else
 	{
-		CurrentMagazineAmmo = FMath::Min(CurrentMagazineAmmo + Amount, MagazineMaxAmmo);
+		float Delta_Magazine = FMath::Min(MagazineMaxAmmo - CurrentMagazineAmmo, Amount);
+		if (Delta_Magazine > 0)
+		{
+			CurrentMagazineAmmo += Delta_Magazine;
+			Amount -= Delta_Magazine;
+		}
+		if (Amount > 0 && CurrentTotalAmmo != WeaponMaxAmmo)
+		{
+			CurrentTotalAmmo = FMath::Min(CurrentTotalAmmo + Amount, WeaponMaxAmmo);
+		}
+		//CurrentMagazineAmmo = FMath::Min(CurrentMagazineAmmo + Amount, MagazineMaxAmmo);
 		UE_LOG(LogTemp, Error, TEXT("Ammo: %d"), CurrentMagazineAmmo);
 	}
 	
+	Client_CallAmmoChangedDelegate(CurrentMagazineAmmo, CurrentTotalAmmo);
 }
 
 
-
-void AWeaponBase::CallAmmoChangedDelegate(int32 MagazineAmmo, int32 MaxAmmo)
+bool AWeaponBase::Client_CallAmmoChangedDelegate_Validate(int32 MagazineAmmo, int32 MaxAmmo)
 {
+	return true;
+}
+
+
+void AWeaponBase::Client_CallAmmoChangedDelegate_Implementation(int32 MagazineAmmo, int32 MaxAmmo)
+{
+	int a = MagazineAmmo;
+	int b = MaxAmmo;
+
 	OnAmmoChanged.Broadcast(MagazineAmmo, MaxAmmo);
 }
 
