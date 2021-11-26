@@ -33,7 +33,10 @@ protected:
 	bool bIsRespawnables = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Nazi Zombie Settings", meta = (EditCondition = "bIsRespawnables"))
-	float RespawnTime = 5.0f;
+	float RespawnTime = 60.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
+	bool bChangeLocationOnBegin = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Nazi Zombie Settings")
 	class USoundWave* PickupTakenSound;
@@ -46,6 +49,9 @@ protected:
 
 public:	
 	bool CouldBeTaken() const;
+
+	UFUNCTION(BlueprintCallable)
+	void DisableRespawn() { bIsRespawnables = false; }
 
 private:	
 	FTimerHandle RespawnTimerHandle;	

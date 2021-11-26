@@ -13,7 +13,7 @@
 APickupBase::APickupBase()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = false;	
 
 	CollisionComponent = CreateDefaultSubobject<USphereComponent>("SphereComponent");
 	CollisionComponent->InitSphereRadius(50.0f);
@@ -38,10 +38,15 @@ void APickupBase::BeginPlay()
 		SetReplicates(true);
 		SetReplicateMovement(true);
 
-		if (RespawnPoints.Num() != 0)
+		if (RespawnPoints.Num() != 0 && bChangeLocationOnBegin)
 		{
-			const FVector NewLocation = RespawnPoints[FMath::RandRange(0, RespawnPoints.Num() - 1)]->GetActorLocation();
-			SetActorLocation(NewLocation);
+			int32 RandomIndex = FMath::RandRange(0, RespawnPoints.Num() - 1);
+			const AActor* RandomPoint = RespawnPoints[RandomIndex];
+			checkf(RandomPoint, TEXT("Respawn Point Is Not Valid"));
+
+			SetActorLocation(RandomPoint->GetActorLocation());
+			
+			
 		}		
 	}
 	

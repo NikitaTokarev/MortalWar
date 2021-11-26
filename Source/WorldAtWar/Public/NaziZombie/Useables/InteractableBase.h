@@ -44,4 +44,7 @@ public:
 
 	virtual void Use(ANaziZombieCharacter* Player);
 	virtual bool GetIsUsed() const { return bIsUsed; }
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	int GetCost() const { return Cost; }
 };

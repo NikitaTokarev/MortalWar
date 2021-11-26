@@ -138,7 +138,7 @@ void ANaziZombieCharacter::OnRep_KnifeAttached()
 	else
 	{
 		Knife->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_knifeHolster"));
-	}	
+	}
 }
 
 
@@ -326,7 +326,7 @@ void ANaziZombieCharacter::IncrementRage(float Value)
 	if (Rage != PreviousRage)
 	{
 		Client_ChangeRage(Rage);
-	}	
+	}
 }
 
 
@@ -339,7 +339,7 @@ void ANaziZombieCharacter::DecrementRage()
 	{
 		DisableRageMode();
 		OnRageFinished.Broadcast();
-		GetWorldTimerManager().ClearTimer(DecrementRageHandle);		
+		GetWorldTimerManager().ClearTimer(DecrementRageHandle);
 	}
 }
 
@@ -387,9 +387,9 @@ void ANaziZombieCharacter::Server_EnableRageMode_Implementation()
 
 	Knife->ActivateRageMode();
 	if (!GetWorld()) return;
-	
+
 	GetWorldTimerManager().SetTimer(DecrementRageHandle, this, &ANaziZombieCharacter::DecrementRage,
-		UBlueprintFunctionLibrary_Misc::IsOnline(this) ? 0.2f : 0.05f, true);	
+		UBlueprintFunctionLibrary_Misc::IsOnline(this) ? 0.2f : 0.05f, true);
 }
 
 
@@ -413,7 +413,7 @@ void ANaziZombieCharacter::DisableRageMode()
 	{
 		Client_DisableRageMode();
 	}
-	
+
 }
 
 
@@ -429,7 +429,7 @@ void ANaziZombieCharacter::Client_DisableRageMode_Implementation()
 	{
 		OnRageFinished.Broadcast();
 	}
-	
+
 	for (auto& It : WeaponArray)
 	{
 		It->Client_CallAmmoChangedDelegate(It->GetCurrentAmmo()[0], It->GetCurrentAmmo()[1]);
@@ -519,8 +519,8 @@ void ANaziZombieCharacter::RecoveryAmmo(TEnumAsByte<EWeaponID> AmmoType, int32 A
 	{
 	case EWeaponID::Colt1911:
 		if (CurrentWeapon == WeaponArray[0])
-		{			
-			Client_OnReload();			
+		{
+			Client_OnReload();
 		}
 
 
@@ -535,15 +535,15 @@ void ANaziZombieCharacter::RecoveryAmmo(TEnumAsByte<EWeaponID> AmmoType, int32 A
 				WeaponArray[0], AmmoAmount);
 			GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 0.5f, false);
 		}
-		
+
 		return;
 
 	case EWeaponID::M1Carbine:
 		if (!WeaponArray.IsValidIndex(1)) return;
 
 		if (CurrentWeapon == WeaponArray[1])
-		{			
-			Client_OnReload();			
+		{
+			Client_OnReload();
 		}
 
 
@@ -558,7 +558,7 @@ void ANaziZombieCharacter::RecoveryAmmo(TEnumAsByte<EWeaponID> AmmoType, int32 A
 				WeaponArray[1], AmmoAmount);
 			GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 0.5f, false);
 		}
-		
+
 		return;
 
 	case EWeaponID::STG44:
