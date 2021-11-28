@@ -31,6 +31,6 @@ public:
 	uint16 GetTotalZombiesRemaining() const { return TotalZombiesRemaining; }
 
 	void ZombieKilled();
-	float GetZombieHealth() const { return ZombieHealth; }
+	float GetZombieHealth(float BaseHealth) const { return BaseHealth + ZombieHealth * 0.75; }
 	
 };

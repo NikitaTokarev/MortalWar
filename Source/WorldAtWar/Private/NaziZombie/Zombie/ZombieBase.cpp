@@ -35,7 +35,13 @@ void AZombieBase::BeginPlay()
 	{
 		if (ANaziZombieGameState* GS = GetWorld()->GetGameState<ANaziZombieGameState>())
 		{
-			Health = GS->GetZombieHealth();
+			MaxHealth = GS->GetZombieHealth(MaxHealth);
+
+			Health = MaxHealth;
+		}
+		else
+		{
+			Health = MaxHealth;
 		}
 	}
 }
@@ -55,7 +61,7 @@ void AZombieBase::DecrementHealth(int16 InDamage)
 {
 	if (HasAuthority())
 	{
-		Health -= InDamage;
+		Health = FMath::Max(Health - InDamage, 0.0f);
 		if (Health <= 0)
 		{
 			Die();
@@ -80,12 +86,25 @@ void AZombieBase::OnRep_Die()
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-	GetMesh()->SetSimulatePhysics(true);
+
+	if (bSimulatePhysicsAfterDeath)
+	{
+		GetMesh()->SetSimulatePhysics(true);
+	}
+	
 }
 
 
 
-void AZombieBase::Die()
+void AZombieBase::Resurrect()
+{
+	Health = MaxHealth * 0.75;
+	Damage *= 0.33;
+}
+
+
+
+void AZombieBase::Die_Implementation()
 {
 	if (HasAuthority())
 	{

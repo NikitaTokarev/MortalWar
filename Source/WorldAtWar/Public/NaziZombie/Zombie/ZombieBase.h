@@ -23,8 +23,13 @@ public:
 	AZombieBase();
 
 protected:
-	UPROPERTY(Replicated, EditAnywhere)
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float MaxHealth = 150.0f;
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
 	float Health;	
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Damage;
@@ -32,10 +37,17 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float CleanupDelay;
 
-	UPROPERTY(ReplicatedUsing = OnRep_Die, EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
+	bool bSimulatePhysicsAfterDeath = true;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Die, BlueprintReadOnly)
 	bool bIsDead;
+
 	UFUNCTION()
 	void OnRep_Die();
+
+	UFUNCTION(BlueprintCallable)
+	void Resurrect();
 
 	UPROPERTY(BlueprintAssignable)
 	FOnEnemyDeath OnEnemyDeath;
@@ -55,7 +67,10 @@ protected:
 	uint8 GetHitPart(const FString& BoneName);
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void DecrementHealth(int16 Damage);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Death")
 	void Die();
+	void Die_Implementation();
 
 	int16 GetPointsForHit(uint8 HitPart, FWeaponDamage WeaponDamage, ANaziZombieCharacter* Player);
 	int32 GetAmmoForRound() const;
