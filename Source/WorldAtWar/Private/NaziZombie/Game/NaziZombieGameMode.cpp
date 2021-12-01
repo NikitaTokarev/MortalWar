@@ -121,7 +121,8 @@ void ANaziZombieGameMode::SpawnZombie()
 			FVector Loc = SpawnPoint->GetActorLocation();
 			FRotator Rot = SpawnPoint->GetActorRotation();
 
-			if (AZombieBase* Zombie = GetWorld()->SpawnActor<AZombieBase>(ZombieClass, Loc, Rot))
+			
+			if (AZombieBase* Zombie = GetWorld()->SpawnActor<AZombieBase>(GetZombieClass(), Loc, Rot))
 			{
 				--ZombiesRemaining;
 			}
@@ -143,6 +144,27 @@ void ANaziZombieGameMode::SpawnZombie()
 
 
 
+TSubclassOf<class AZombieBase> ANaziZombieGameMode::GetZombieClass() const
+{
+	uint16 RoundIndex = ZombieGameState->GetRoundNumber() - 1;
+	uint16 Index = ZombiesWaves.IsValidIndex(RoundIndex) ? RoundIndex : ZombiesWaves.Num() - 1;
+
+	auto Wave = ZombiesWaves[Index];
+
+	for (const auto& It : Wave.ZombieWave)
+	{		
+		checkf(It.Key, TEXT("ZombieClass Is Not Valid"));		
+
+		if (FMath::RandRange(0.0f, 1.0f) <= It.Value)
+		{			
+			return It.Key;
+		}
+	}
+
+	UE_LOG(LogTemp, Error, TEXT("NazizombieGameMode.cpp::GetZombieClass: Cannot spawn zombie - Invalid chance"));
+	return nullptr;
+}
+
 
 
 void ANaziZombieGameMode::TimesUp()
@@ -154,6 +176,7 @@ void ANaziZombieGameMode::TimesUp()
 
 	CalculateZombieCount();
 }
+
 
 
 

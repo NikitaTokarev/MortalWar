@@ -60,7 +60,7 @@ void ANaziZombieCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	DOREPLIFETIME(ANaziZombieCharacter, Health);
 	DOREPLIFETIME_CONDITION(ANaziZombieCharacter, Rage, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(ANaziZombieCharacter, bIsRage, COND_OwnerOnly);
-	DOREPLIFETIME(ANaziZombieCharacter, bIsDead);
+	DOREPLIFETIME(ANaziZombieCharacter, bIsDead);	
 }
 
 
@@ -86,6 +86,12 @@ void ANaziZombieCharacter::OnRep_HealthChanged()
 		OnHealthChanged.Broadcast(Health);
 	}
 }
+
+
+
+
+
+
 
 void ANaziZombieCharacter::GetAnyDamageFromEnemy(AActor* DamagedActor, float Damage, const  UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
@@ -288,7 +294,7 @@ void ANaziZombieCharacter::OnFire()
 
 void ANaziZombieCharacter::OnReload()
 {
-	if (CurrentWeapon && !bIsDead)
+	if (CurrentWeapon && !bIsDead && !bIsRage)
 	{
 		CurrentWeapon->Reload();
 	}
@@ -445,8 +451,14 @@ void ANaziZombieCharacter::RecoveryHealth(float HealthAmount)
 {
 	if (HasAuthority())
 	{
-		Health = FMath::Min(Health + HealthAmount, MaxHealth);
+		Health = FMath::Clamp(Health + HealthAmount, 0.1f, MaxHealth);
 		OnRep_HealthChanged();
+
+		if (Health <= 0.1f && !bIsDead)
+		{
+			FTimerHandle TempHandle;
+			GetWorldTimerManager().SetTimer(TempHandle, this, &ANaziZombieCharacter::DiseaseFinished, 1.25f, false);
+		}
 	}
 	else
 	{
@@ -570,7 +582,45 @@ void ANaziZombieCharacter::RecoveryAmmo(TEnumAsByte<EWeaponID> AmmoType, int32 A
 }
 
 
+
 void ANaziZombieCharacter::UpdateAmmoAfterPickup_Client(AWeaponBase* Weapon, int32 AmmoAmount)
 {
 	Weapon->RecoveryAmmo(AmmoAmount);
 }
+
+
+
+bool ANaziZombieCharacter::Server_ImposeDisease_Validate(float Time, float Damage)
+{
+	return true;
+}
+
+
+
+void ANaziZombieCharacter::Server_ImposeDisease_Implementation(float Time, float Damage)
+{	
+	FTimerDelegate DiseaseTimerDelegate = FTimerDelegate::CreateUObject(this, &ANaziZombieCharacter::RecoveryHealth,
+		Damage*(-1));
+	GetWorld()->GetTimerManager().SetTimer(DiseaseHandle, DiseaseTimerDelegate, 1.5f, true);
+
+	bIsInfected = true;
+	OnRep_InfectedStateChanged();
+
+	FTimerHandle FinishedDiseaseHandle;
+
+	GetWorldTimerManager().SetTimer(FinishedDiseaseHandle, this, &ANaziZombieCharacter::DiseaseFinished, Time + 0.1f, false);
+}
+
+
+
+void ANaziZombieCharacter::DiseaseFinished()
+{
+	if (GetWorldTimerManager().IsTimerActive(DiseaseHandle))
+	{
+		GetWorldTimerManager().ClearTimer(DiseaseHandle);
+
+		bIsInfected = false;
+		OnRep_InfectedStateChanged();
+	}	
+}
+

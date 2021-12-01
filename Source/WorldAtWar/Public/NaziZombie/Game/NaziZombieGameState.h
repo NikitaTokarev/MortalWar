@@ -6,9 +6,9 @@
 #include "GameFramework/GameStateBase.h"
 #include "NaziZombieGameState.generated.h"
 
-/**
- * 
- */
+
+
+
 UCLASS()
 class WORLDATWAR_API ANaziZombieGameState : public AGameStateBase
 {
@@ -18,6 +18,9 @@ public:
 	ANaziZombieGameState();
 
 protected:
+	/*UPROPERTY(EditDefaultsOnly)
+	TArray<TMap<TSubclassOf<class AZombieBase>, float>> ZombiesWaves;*/	
+
 	uint16 RoundNumber;
 	uint8 ZombiesOnMap;
 	uint16 TotalZombiesRemaining;

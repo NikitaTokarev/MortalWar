@@ -13,6 +13,16 @@ class ANaziZombieCharacter;
 class AZombieBase;
 class ANaziZombieGameState;
 
+USTRUCT(BlueprintType)
+struct FZombieWave
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	TMap<TSubclassOf<class AZombieBase>, float> ZombieWave;	
+};
+
+
 UCLASS()
 class WORLDATWAR_API ANaziZombieGameMode : public AGameModeBase
 {
@@ -24,6 +34,9 @@ public:
 protected:
 	ANaziZombieGameState* ZombieGameState;
 
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FZombieWave> ZombiesWaves;
+
 	bool bHasLoadedSpawnPoints;
 	TArray<ANaziZombiePlayerSpawnPoint*> PlayerSpawnPoints;	
 
@@ -34,7 +47,7 @@ protected:
 	TSubclassOf<ANaziZombieCharacter> PlayerClass;
 
 	UPROPERTY(EditAnywhere, Category = "NaziZombieSettings")
-		TSubclassOf<AZombieBase> ZombieClass;
+	TSubclassOf<AZombieBase> ZombieClass;
 
 	FTimerHandle TZombieSpawnHandle;
 	FTimerHandle TTimesUpHandle;
@@ -46,6 +59,8 @@ protected:
 	void SpawnZombie();
 
 	void TimesUp();
+
+	TSubclassOf<class AZombieBase> GetZombieClass() const;
 
 protected:
 	virtual void BeginPlay() override;

@@ -18,7 +18,7 @@ class AWeaponBase;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWeaponChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FIsAimingChanged, bool, NewAiming);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInfectedState, bool, bNewState);
 
 UCLASS()
 class WORLDATWAR_API ACharacterBase : public ACharacter
@@ -51,11 +51,17 @@ protected:
 	UPROPERTY(ReplicatedUsing = OnRep_AttachWeapon)
 	AWeaponBase* CurrentWeapon;	
 
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_InfectedStateChanged)
+	bool bIsInfected = false;
+
 	//UPROPERTY(Replicated)
 	AWeaponBase* PreviousWeapon;
 
 	UFUNCTION()
 	void OnRep_AttachWeapon();
+
+	UFUNCTION()
+	void OnRep_InfectedStateChanged();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_SwitchWeapon(AWeaponBase* NewWeapon);
@@ -81,6 +87,9 @@ protected:
 
 	UPROPERTY(BlueprintAssignable)
 	FIsAimingChanged OnAimingChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FInfectedState OnInfectedStateChanged;
 
 	UFUNCTION(BlueprintCallable)
 	virtual void OnAimingStart();
@@ -160,4 +169,5 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SwitchNextWeapon(bool bIsNext);
 
+	bool GetIsInfected() const { return bIsInfected; }
 };

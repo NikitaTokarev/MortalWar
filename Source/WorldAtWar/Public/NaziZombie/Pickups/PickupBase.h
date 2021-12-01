@@ -30,7 +30,7 @@ protected:
 	TArray<AActor*> RespawnPoints;
 
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
-	bool bIsRespawnables = true;
+	bool bIsRespawnables = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Nazi Zombie Settings", meta = (EditCondition = "bIsRespawnables"))
 	float RespawnTime = 60.0f;
@@ -39,7 +39,7 @@ protected:
 	bool bChangeLocationOnBegin = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Nazi Zombie Settings")
-	class USoundWave* PickupTakenSound;
+	class USoundWave* PickupTakenSound;	
 
 	virtual void BeginPlay() override;
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
@@ -51,7 +51,7 @@ public:
 	bool CouldBeTaken() const;
 
 	UFUNCTION(BlueprintCallable)
-	void DisableRespawn() { bIsRespawnables = false; }
+	void ToggleRespawn(bool bNewFlag) { bIsRespawnables = bNewFlag; }
 
 private:	
 	FTimerHandle RespawnTimerHandle;	

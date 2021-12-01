@@ -43,15 +43,18 @@ protected:
 	float Rage;
 
 	UPROPERTY(BlueprintReadOnly, Replicated)
-	bool bIsRage;
+	bool bIsRage;	
 
 	FTimerHandle DecrementRageHandle;
 
+	FTimerHandle DiseaseHandle;
+
 	UFUNCTION()
 	void OnRep_HealthChanged();	
+		
 
 	UPROPERTY(BlueprintAssignable)
-	FHealthChanged OnHealthChanged;
+	FHealthChanged OnHealthChanged;	
 
 	UFUNCTION()
 	void GetAnyDamageFromEnemy(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
@@ -188,4 +191,11 @@ public:
 
 	void RecoveryHealth(float HealthAmount);
 	void RecoveryAmmo(TEnumAsByte<EWeaponID> AmmoType, int32 AmmoAmount);
+
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
+	void Server_ImposeDisease(float Time, float Damage);
+	bool Server_ImposeDisease_Validate(float Time, float Damage);
+	void Server_ImposeDisease_Implementation(float Time, float Damage);
+
+	void DiseaseFinished();
 };

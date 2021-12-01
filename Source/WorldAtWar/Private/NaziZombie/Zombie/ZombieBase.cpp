@@ -7,6 +7,7 @@
 #include "NaziZombie/Game/NaziZombieGameMode.h"
 #include "NaziZombie/Game/NaziZombieGameState.h"
 #include "NaziZombie/Game/NaziZombieGameState.h"
+#include "NaziZombie/Pickups/PickupBase.h"
 
 #include "Net/UnrealNetwork.h"
 #include "Components/CapsuleComponent.h"
@@ -121,7 +122,34 @@ void AZombieBase::Die_Implementation()
 		{
 			GM->ZombieKilled();
 		}
+
+		if (bSpawnPickupAfterDeath && DroppingItems.Num() > 0)
+		{
+			for (auto& It : DroppingItems)
+			{
+				if (FMath::RandRange(0.0f, 1.0f) <= It.Value)
+				{					
+
+					FTimerHandle TimerHandle;
+					FTimerDelegate TimerDelegate = FTimerDelegate::CreateUObject(this, &AZombieBase::SpawnPickupAfterDeath, It.Key,
+						GetActorLocation() + FVector(0.0f, 0.0f, 15.0f));
+
+					GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 0.5f, false);
+					break;
+				}
+			}
+		}
 	}
+}
+
+
+
+void AZombieBase::SpawnPickupAfterDeath(TSubclassOf<class APickupBase> PickupClass, FVector Location)
+{
+	FActorSpawnParameters SpawnParam;
+	SpawnParam.Owner = GetWorld()->GetFirstPlayerController();
+
+	GetWorld()->SpawnActor<APickupBase>(PickupClass, Location, FRotator(0.0f), SpawnParam);
 }
 
 
@@ -335,3 +363,5 @@ void AZombieBase::DeactivateBuff()
 	Health /= 1.5;
 	Damage /= 1.33;
 }
+
+

@@ -13,5 +13,10 @@ bool APickup_Health::CanTakePickup(ANaziZombieCharacter* Player)
 
 void APickup_Health::GivePickupTo(ANaziZombieCharacter* Player)
 {
-	Player->RecoveryHealth(HealthAmount);	
+	Player->RecoveryHealth(HealthAmount);
+
+	if (Player->GetIsInfected())
+	{
+		Player->DiseaseFinished();
+	}
 }

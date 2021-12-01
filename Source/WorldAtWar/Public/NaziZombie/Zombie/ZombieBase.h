@@ -61,6 +61,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TArray<USoundWave*> HitSounds;
 
+	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
+	bool bSpawnPickupAfterDeath = true;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Nazi Zombie Settings", meta = (EditCondition = "bSpawnPickupAfterDeath"))
+	TMap<TSubclassOf<class APickupBase>, float> DroppingItems;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -85,6 +91,9 @@ protected:
 
 	void DeactivateBuff();
 
+	UFUNCTION()
+	void SpawnPickupAfterDeath(TSubclassOf<class APickupBase> PickupClass, FVector Location);
+
 public:
 	void Hit(ANaziZombieCharacter* Player, FHitResult HitResult);
 	void Hit_Knife(ANaziZombieCharacter* Player, float BaseDamage, float RageForKilling);
@@ -94,4 +103,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ActivateBuff(float ActiveTime, bool bIsEternal = false);
+
+	UFUNCTION(BlueprintCallable)
+	void DisableDrop() { bSpawnPickupAfterDeath = false; }
 };
