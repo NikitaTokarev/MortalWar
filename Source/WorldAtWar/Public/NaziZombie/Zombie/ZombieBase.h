@@ -65,6 +65,9 @@ protected:
 	bool bSpawnPickupAfterDeath = true;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Nazi Zombie Settings", meta = (EditCondition = "bSpawnPickupAfterDeath"))
+	float HeightOfPickupAboveGround = 15.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Nazi Zombie Settings", meta = (EditCondition = "bSpawnPickupAfterDeath"))
 	TMap<TSubclassOf<class APickupBase>, float> DroppingItems;
 
 protected:

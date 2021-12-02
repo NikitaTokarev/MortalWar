@@ -8,7 +8,7 @@ ANaziZombieGameState::ANaziZombieGameState()
 	RoundNumber = 1;
 	ZombiesOnMap = 0;
 	TotalZombiesRemaining = 0;
-	ZombieHealth = 150.0f;
+	ZombieHealthMult = 1.0f;
 }
 
 uint16 ANaziZombieGameState::GetRoundNumber() const
@@ -22,11 +22,11 @@ void ANaziZombieGameState::IncrementRoundNumber()
 
 	if (RoundNumber < 10)
 	{
-		ZombieHealth += 100;
+		ZombieHealthMult *= 1.1f;
 	}
 	else
 	{
-		ZombieHealth *= 1.1;
+		ZombieHealthMult *= 1.05f;
 	}
 }
 
@@ -38,5 +38,12 @@ void ANaziZombieGameState::SetTotalZombiesRemaining(const uint16& ZombieCount)
 void ANaziZombieGameState::ZombieKilled()
 {
 	--TotalZombiesRemaining;
+}
+
+
+
+float ANaziZombieGameState::GetZombieHealth(float BaseHealth) const
+{
+	return FMath::Min(BaseHealth * ZombieHealthMult, BaseHealth * 3.0f);
 }
 

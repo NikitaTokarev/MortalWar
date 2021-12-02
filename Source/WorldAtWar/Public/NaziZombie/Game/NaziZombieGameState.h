@@ -24,7 +24,7 @@ protected:
 	uint16 RoundNumber;
 	uint8 ZombiesOnMap;
 	uint16 TotalZombiesRemaining;
-	float ZombieHealth;
+	float ZombieHealthMult;
 
 public:
 	uint16 GetRoundNumber() const;
@@ -34,6 +34,6 @@ public:
 	uint16 GetTotalZombiesRemaining() const { return TotalZombiesRemaining; }
 
 	void ZombieKilled();
-	float GetZombieHealth(float BaseHealth) const { return BaseHealth + ZombieHealth * 0.75; }
+	float GetZombieHealth(float BaseHealth) const;
 	
 };

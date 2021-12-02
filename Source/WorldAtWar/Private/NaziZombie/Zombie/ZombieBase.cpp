@@ -132,7 +132,7 @@ void AZombieBase::Die_Implementation()
 
 					FTimerHandle TimerHandle;
 					FTimerDelegate TimerDelegate = FTimerDelegate::CreateUObject(this, &AZombieBase::SpawnPickupAfterDeath, It.Key,
-						GetActorLocation() + FVector(0.0f, 0.0f, 15.0f));
+						GetActorLocation() + FVector(0.0f, 0.0f, HeightOfPickupAboveGround));
 
 					GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 0.5f, false);
 					break;
