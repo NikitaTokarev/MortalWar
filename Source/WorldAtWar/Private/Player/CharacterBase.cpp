@@ -106,6 +106,40 @@ void ACharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 }
 
 
+// Called to bind functionality to input
+void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	// set up gameplay key bindings
+	check(PlayerInputComponent);
+
+	// Bind jump events
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	// Bind aiming events
+	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &ACharacterBase::OnAimingStart);
+	PlayerInputComponent->BindAction("Aim", IE_Released, this, &ACharacterBase::OnAimingEnd);
+
+	// Bind fire event
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ACharacterBase::OnFire);
+
+	DECLARE_DELEGATE_OneParam(FScrollWeaponSignature, bool /* true - Next, false - Privious */);
+	PlayerInputComponent->BindAction<FScrollWeaponSignature>("SwitchNextWeapon", IE_Pressed, this, &ACharacterBase::SwitchNextWeapon, true);
+	PlayerInputComponent->BindAction<FScrollWeaponSignature>("SwitchPreviousWeapon", IE_Pressed, this, &ACharacterBase::SwitchNextWeapon, false);
+
+	// Bind movement events
+	PlayerInputComponent->BindAxis("MoveForward", this, &ACharacterBase::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ACharacterBase::MoveRight);
+
+	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("TurnRate", this, &ACharacterBase::TurnAtRate);
+	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUpRate", this, &ACharacterBase::LookUpAtRate);
+}
+
+
 
 bool ACharacterBase::Server_SwitchWeapon_Validate(AWeaponBase* NewWeapon)
 {
@@ -185,38 +219,6 @@ AWeaponBase* ACharacterBase::GetCurrentWeapon() const
 	return CurrentWeapon;
 }
 
-// Called to bind functionality to input
-void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	// set up gameplay key bindings
-	check(PlayerInputComponent);
-
-	// Bind jump events
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-
-	// Bind aiming events
-	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &ACharacterBase::OnAimingStart);
-	PlayerInputComponent->BindAction("Aim", IE_Released, this, &ACharacterBase::OnAimingEnd);
-
-	// Bind fire event
-	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ACharacterBase::OnFire);
-
-	DECLARE_DELEGATE_OneParam(FScrollWeaponSignature, bool /* true - Next, false - Privious */);
-	PlayerInputComponent->BindAction<FScrollWeaponSignature>("SwitchNextWeapon", IE_Pressed, this, &ACharacterBase::SwitchNextWeapon, true);
-	PlayerInputComponent->BindAction<FScrollWeaponSignature>("SwitchPreviousWeapon", IE_Pressed, this, &ACharacterBase::SwitchNextWeapon, false);
-
-	// Bind movement events
-	PlayerInputComponent->BindAxis("MoveForward", this, &ACharacterBase::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &ACharacterBase::MoveRight);
-
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("TurnRate", this, &ACharacterBase::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &ACharacterBase::LookUpAtRate);
-}
 
 
 
@@ -325,7 +327,7 @@ void ACharacterBase::SwitchNextWeapon(bool bIsNext)
 
 		bCanChangeWeapon = false;
 		FTimerHandle EnableChanging;
-		GetWorldTimerManager().SetTimer(EnableChanging, this, &ACharacterBase::EnableChangeWeapon, 0.25f, false);
+		GetWorldTimerManager().SetTimer(EnableChanging, this, &ACharacterBase::EnableChangeWeapon, bIsRage ? 0.02f : 0.25f, false);
 
 
 		if (CurrentWeapon->GetCanFire() && !CurrentWeapon->GetIsReloading())

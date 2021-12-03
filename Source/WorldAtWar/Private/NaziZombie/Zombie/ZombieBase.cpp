@@ -162,7 +162,7 @@ uint8 AZombieBase::GetHitPart(const FString& BoneName)
 		return 1;
 	}
 	// torso hit
-	else if (BoneName.Contains(FString("Spine")) || BoneName.Contains(FString("Hips")))
+	else if (BoneName.Contains(FString("Spine")) || BoneName.Contains(FString("Hips")) || BoneName.Contains(FString("Ribcage")))
 	{
 		return 2;
 	}
@@ -170,7 +170,7 @@ uint8 AZombieBase::GetHitPart(const FString& BoneName)
 	{
 		return 3;
 	}
-	else if (BoneName.Equals(FString("Head")))
+	else if (BoneName.Contains(FString("Head")))
 	{
 		return 4;
 	}

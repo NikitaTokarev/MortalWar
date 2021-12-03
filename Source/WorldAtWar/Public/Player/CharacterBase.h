@@ -42,6 +42,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* RageModeCamera;
 
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	bool bIsRage;
+
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
 	TSubclassOf<AWeaponBase> StartingWeaponClass;
 

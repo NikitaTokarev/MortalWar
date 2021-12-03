@@ -41,10 +41,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	float Rage;
-
-	UPROPERTY(BlueprintReadOnly, Replicated)
-	bool bIsRage;	
-
+	
 	FTimerHandle DecrementRageHandle;
 
 	FTimerHandle DiseaseHandle;
