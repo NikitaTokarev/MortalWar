@@ -22,7 +22,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
 	FText ObjectName;
 
-	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Nazi Zombie Settings")
 	FText UIMessage;
 
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")

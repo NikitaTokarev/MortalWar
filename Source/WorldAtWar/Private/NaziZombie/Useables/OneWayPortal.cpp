@@ -25,7 +25,7 @@ void AOneWayPortal::BeginPlay()
 
 	SetReplicates(true);
 
-	if (Cost != 0)
+	/*if (Cost != 0)
 	{
 		const FString ResultMessage = UIMessage.ToString() + ObjectName.ToString() + "[Cost: " + FString::FromInt(Cost) + "]";
 
@@ -36,7 +36,7 @@ void AOneWayPortal::BeginPlay()
 		const FString ResultMessage = "Two-finger touch to use " + ObjectName.ToString();
 
 		UIMessage = FText::FromString(ResultMessage);
-	}
+	}*/
 		
 }
 

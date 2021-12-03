@@ -57,9 +57,9 @@ void AWallWeapon::BeginPlay()
 		}
 	}
 
-	const FString ResultMessage = UIMessage.ToString() + ObjectName.ToString() + "[Cost: " + FString::FromInt(Cost) + "]";
+	/*const FString ResultMessage = UIMessage.ToString() + ObjectName.ToString() + "[Cost: " + FString::FromInt(Cost) + "]";
 
-	UIMessage = FText::FromString(ResultMessage);
+	UIMessage = FText::FromString(ResultMessage);*/
 }
 
 

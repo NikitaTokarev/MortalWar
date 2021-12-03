@@ -28,15 +28,15 @@ void AInteractableBase::OnRep_ObjectUsed()
 // Called when the game starts or when spawned
 void AInteractableBase::BeginPlay()
 {
-	Super::BeginPlay();
-	
+	Super::BeginPlay();	
+
 	SetReplicates(true);
 
-	//UIMessage += ObjectName + "[Cost: " + FString::FromInt(Cost) + "]";
 
-	const FString ResultMessage = UIMessage.ToString() + ObjectName.ToString() + "[Cost: " + FString::FromInt(Cost) + "]";
 
-	UIMessage.FromString(ResultMessage);
+	//const FString ResultMessage = UIMessage.ToString() + ObjectName.ToString() + "[Cost: " + FString::FromInt(Cost) + "]";
+
+	//UIMessage.FromString(ResultMessage);
 }
 
 void AInteractableBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
