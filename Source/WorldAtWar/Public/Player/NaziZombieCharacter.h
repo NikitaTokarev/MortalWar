@@ -12,7 +12,7 @@ class AInteractableBase;
 class AWeaponBase;
 class UAnimMontage;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractChanged, const FText&, OnInteractChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractChanged, AInteractableBase*, InteractableObject);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHealthChanged, float, NewHealth);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRageChanged, float, NewRage);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDeathDelegate);
@@ -30,6 +30,9 @@ public:
 	ANaziZombieCharacter();
 
 protected:
+	UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* InteractableBox;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float MaxHealth;
 
@@ -141,7 +144,17 @@ protected:
 	bool Client_ChangeRage_Validate(float NewRage);
 	void Client_ChangeRage_Implementation(float NewRage);
 
-	void SetInteractionObject();
+
+
+	void SetInteractionObject(AActor* OtherActor);
+
+	UFUNCTION()
+	void OnInteractableBoxStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent*
+		OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnInteractableBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent*
+		OtherComp, int32 OtherBodyIndex);
 	
 	virtual void OnFire() override;
 
@@ -166,6 +179,7 @@ protected:
 
 public:
 	void EquipWeapon(AWeaponBase* NewWeapon);
+	void EquipKnife(AKnife* NewKnife);
 	uint32 GetPoints() const;
 
 	UFUNCTION(BlueprintCallable)

@@ -298,23 +298,27 @@ void AZombieBase::Hit_Knife(ANaziZombieCharacter* Player, float BaseDamage, floa
 	{
 		{
 			PState->IncrementPoints(15);
+			float AdditionalDamage = 0.0f;
+
 			if (ANaziZombieGameState* GS = GetWorld()->GetGameState<ANaziZombieGameState>())
 			{
-				float AdditionalDamage = GS->GetRoundNumber() * 12.5;
+				AdditionalDamage = GS->GetRoundNumber() * 12.5;
+			}			
 
-				if (Health - (BaseDamage + AdditionalDamage) <= 0)
-				{
-					PState->AddKill();
-					PState->AddKnifing();
+			if (Health - (BaseDamage + AdditionalDamage) <= 0)
+			{
+				PState->AddKill();
+				PState->AddKnifing();
 
-					Player->IncrementRage(RageForKilling);
-				}
-
-				DecrementHealth(BaseDamage + AdditionalDamage);
+				Player->IncrementRage(RageForKilling);
 			}
-			else
-				DecrementHealth(BaseDamage);
+
+			DecrementHealth(BaseDamage + AdditionalDamage);
 		}
+	}
+	else
+	{
+		DecrementHealth(BaseDamage);
 	}
 }
 

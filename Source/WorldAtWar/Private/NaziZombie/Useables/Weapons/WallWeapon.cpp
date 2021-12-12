@@ -2,10 +2,8 @@
 
 
 #include "NaziZombie/Useables/Weapons/WallWeapon.h"
-#include "NaziZombie/Useables/WeaponBase.h"
 #include "Player/NaziZombieCharacter.h"
 #include "Player/NaziZombiePlayerState.h"
-
 #include "Components/StaticMeshComponent.h"
 
 
@@ -31,7 +29,7 @@ AWallWeapon::AWallWeapon()
 	ObjectName = FText::FromString("M1 Carbine");
 	Cost = 500;
 
-	RespawnTime = 5.0f;
+	RespawnTime = 35.0f;
 
 
 }
@@ -66,27 +64,9 @@ void AWallWeapon::BeginPlay()
 
 void AWallWeapon::Use(ANaziZombieCharacter* Player)
 {
-	if (Player && Player->GetPoints() >= Cost)
-	{
-		if (AWeaponBase* ExistingWeapon = Player->CheckWeaponClass(WeaponClass))
-		{
-			ExistingWeapon->RecoveryAmmo(0, true);
-			if (ExistingWeapon != Player->GetCurrentWeapon())
-			{
-				Player->SwitchNextWeapon(true);
-			}
-		}
-		else
-		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = Cast<AActor>(Player);
-
-			if (AWeaponBase* Weapon = GetWorld()->SpawnActor<AWeaponBase>(WeaponClass, SpawnParams))
-			{
-				Player->EquipWeapon(Weapon);
-			}
-		}
-
+	if (Player && Player->GetPoints() >= Cost && CanBeTaken(Player))
+	{		
+		TakeWeapon(Player);
 
 		if (HasAuthority())
 		{
@@ -109,8 +89,20 @@ void AWallWeapon::Use(ANaziZombieCharacter* Player)
 
 
 
+bool AWallWeapon::CanBeTaken(ANaziZombieCharacter* Player) const
+{
+	return true;
+}
+
+void AWallWeapon::TakeWeapon(ANaziZombieCharacter* Player)
+{
+	
+}
+
+
 void AWallWeapon::OnRep_ObjectUsed()
 {
+	SetActorEnableCollision(!bIsUsed);
 	SetActorHiddenInGame(bIsUsed);
 
 	if (HasAuthority() && bIsUsed == true && bIsRespawnables)

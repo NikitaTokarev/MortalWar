@@ -457,6 +457,11 @@ void AWeaponBase::Client_CallAmmoChangedDelegate_Implementation(int32 MagazineAm
 
 void AWeaponBase::ActivateRageMode()
 {
+	if (WeaponDamage.DamageInRage != 1.0f)
+	{
+		WeaponDamage.BaseDamage *= WeaponDamage.DamageInRage;
+	}
+
 	BeforeRage_MagazineMaxAmmo = MagazineMaxAmmo;
 	BeforeRage_TotalAmmo = CurrentTotalAmmo;
 	BeforeRage_MagazineAmmo = CurrentMagazineAmmo;
@@ -470,6 +475,11 @@ void AWeaponBase::ActivateRageMode()
 
 void AWeaponBase::DeactivateRageMode()
 {
+	if (WeaponDamage.DamageInRage != 1.0f)
+	{
+		WeaponDamage.BaseDamage /= WeaponDamage.DamageInRage;
+	}
+
 	MagazineMaxAmmo = BeforeRage_MagazineMaxAmmo;
 	CurrentTotalAmmo = BeforeRage_TotalAmmo;
 	CurrentMagazineAmmo = BeforeRage_MagazineAmmo;

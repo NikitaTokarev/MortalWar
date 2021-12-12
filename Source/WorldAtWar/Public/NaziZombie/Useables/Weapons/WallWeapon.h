@@ -7,7 +7,6 @@
 #include "WallWeapon.generated.h"
 
 
-class AWeaponBase;
 class UStaticMeshComponent;
 class ANaziZombieCharacter;
 
@@ -26,9 +25,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Nazi Zombie Settings")
 	UStaticMeshComponent* WallWeaponMesh;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Nazi Zombie Settings")
-	TSubclassOf<AWeaponBase> WeaponClass;
+		
 
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
 	bool bIsRespawnables = true;
@@ -42,8 +39,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
 	bool bChangeLocationOnBegin = true;
 	
-	virtual void BeginPlay() override;
+	virtual void BeginPlay() override;	
 	virtual void OnRep_ObjectUsed() override;
+
+	virtual bool CanBeTaken(ANaziZombieCharacter* Player) const;
+	virtual void TakeWeapon(ANaziZombieCharacter* Player);
 
 	void SetObjectCanBeUsed();
 

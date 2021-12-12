@@ -10,6 +10,7 @@
 #include "BlueprintFunctionLibrary_Misc.h"
 
 #include "Components/CapsuleComponent.h"
+#include "Components/BoxComponent.h"
 #include "TimerManager.h"
 #include "Camera/CameraComponent.h"
 #include "DrawDebugHelpers.h"
@@ -18,6 +19,9 @@
 
 ANaziZombieCharacter::ANaziZombieCharacter()
 {
+	InteractableBox = CreateDefaultSubobject<UBoxComponent>("InteractableZone");
+	InteractableBox->SetupAttachment(FirstPersonCameraComponent);
+
 	Interactable = nullptr;
 	InteractionRange = 150.0f;
 
@@ -49,7 +53,9 @@ void ANaziZombieCharacter::BeginPlay()
 	}
 
 
-	GetWorld()->GetTimerManager().SetTimer(TInteractTimerHandle, this, &ANaziZombieCharacter::SetInteractionObject, 0.2f, true);
+	//GetWorld()->GetTimerManager().SetTimer(TInteractTimerHandle, this, &ANaziZombieCharacter::SetInteractionObject, 0.3f, true);
+	InteractableBox->OnComponentBeginOverlap.AddDynamic(this, &ANaziZombieCharacter::OnInteractableBoxStartOverlap);
+	InteractableBox->OnComponentEndOverlap.AddDynamic(this, &ANaziZombieCharacter::OnInteractableBoxEndOverlap);
 }
 
 void ANaziZombieCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -58,8 +64,7 @@ void ANaziZombieCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 
 	DOREPLIFETIME(ANaziZombieCharacter, Knife);
 	DOREPLIFETIME(ANaziZombieCharacter, Health);
-	DOREPLIFETIME_CONDITION(ANaziZombieCharacter, Rage, COND_OwnerOnly);
-	DOREPLIFETIME_CONDITION(ANaziZombieCharacter, bIsRage, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(ANaziZombieCharacter, Rage, COND_OwnerOnly);	
 	DOREPLIFETIME(ANaziZombieCharacter, bIsDead);	
 }
 
@@ -77,6 +82,58 @@ void ANaziZombieCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAction("KnifeAttack", IE_Pressed, this, &ANaziZombieCharacter::OnKnifeAttack);
 
 }
+
+
+
+void ANaziZombieCharacter::OnInteractableBoxStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	SetInteractionObject(OtherActor);
+}
+
+
+
+void ANaziZombieCharacter::OnInteractableBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (OtherActor == Interactable)
+	{
+		Interactable = nullptr;
+		OnInteractChanged.Broadcast(nullptr);
+	}
+}
+
+
+
+void ANaziZombieCharacter::SetInteractionObject(AActor* OtherActor)
+{
+	/*FVector Start = GetFirstPersonCameraComponent()->GetComponentLocation() + GetActorForwardVector() * 10.0f;
+	FVector Rot = GetFirstPersonCameraComponent()->GetComponentRotation().Vector();
+	FVector End = Start + Rot * InteractionRange;
+
+	FHitResult HitResult;
+	FCollisionObjectQueryParams CollisionQuery;
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(this);
+
+	GetWorld()->LineTraceSingleByObjectType(OUT HitResult, Start, End, CollisionQuery, CollisionParams);*/
+
+	AInteractableBase* Temp = Cast<AInteractableBase>(OtherActor);
+
+	if (Interactable == nullptr && Temp && !Temp->GetIsUsed())
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("IS NOW A VALID POINTER"));
+		Interactable = Temp;
+		OnInteractChanged.Broadcast(Interactable);
+	}
+	else if (Interactable && (Temp == nullptr || Temp->GetIsUsed()))
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("IS NOW A NULL PTR"));
+		Interactable = nullptr;
+		OnInteractChanged.Broadcast(nullptr);
+	}
+
+}
+
+
 
 
 void ANaziZombieCharacter::OnRep_HealthChanged()
@@ -151,11 +208,15 @@ void ANaziZombieCharacter::OnRep_KnifeAttached()
 
 void ANaziZombieCharacter::EquipWeapon(AWeaponBase* NewWeapon)
 {
+	UE_LOG(LogTemp, Warning, TEXT("%d"), NewWeapon->GetWeaponSlot());
+
 	if (HasAuthority())
 	{
-		if (WeaponArray.IsValidIndex(1))
+		int8 WeaponSlot = NewWeapon->GetWeaponSlot();
+
+		if (WeaponArray.IsValidIndex(WeaponSlot))
 		{
-			WeaponArray[1] = NewWeapon;
+			WeaponArray[WeaponSlot] = NewWeapon;
 		}
 		else
 		{
@@ -171,6 +232,13 @@ void ANaziZombieCharacter::EquipWeapon(AWeaponBase* NewWeapon)
 	}
 
 	WeaponIndex = (WeaponIndex + 1) % WeaponArray.Num();
+}
+
+
+
+void ANaziZombieCharacter::EquipKnife(AKnife* NewKnife)
+{
+	Knife = NewKnife;
 }
 
 
@@ -249,35 +317,6 @@ void ANaziZombieCharacter::Server_EquipWeapon_Implementation(AWeaponBase* NewWea
 
 
 
-void ANaziZombieCharacter::SetInteractionObject()
-{
-	FVector Start = GetFirstPersonCameraComponent()->GetComponentLocation();
-	FVector Rot = GetFirstPersonCameraComponent()->GetComponentRotation().Vector();
-	FVector End = Start + Rot * InteractionRange;
-
-	FHitResult HitResult;
-	FCollisionObjectQueryParams CollisionQuery;
-	FCollisionQueryParams CollisionParams;
-	CollisionParams.AddIgnoredActor(this);
-
-	GetWorld()->LineTraceSingleByObjectType(OUT HitResult, Start, End, CollisionQuery, CollisionParams);
-
-	AInteractableBase* Temp = Cast<AInteractableBase>(HitResult.GetActor());
-
-	if (Interactable == nullptr && Temp && !Temp->GetIsUsed())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("IS NOW A VALID POINTER"));
-		Interactable = Temp;
-		OnInteractChanged.Broadcast(Interactable->GetUIMessage());
-	}
-	else if (Interactable && (Temp == nullptr || Temp->GetIsUsed()))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("IS NOW A NULL PTR"));
-		Interactable = nullptr;
-		OnInteractChanged.Broadcast(FText());
-	}
-
-}
 
 
 void ANaziZombieCharacter::OnFire()

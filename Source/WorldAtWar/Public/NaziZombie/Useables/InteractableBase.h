@@ -40,11 +40,15 @@ protected:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeTimeProps) const override;
 
 public:
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FText GetUIMessage() const { return UIMessage; }
-
-	virtual void Use(ANaziZombieCharacter* Player);
-	virtual bool GetIsUsed() const { return bIsUsed; }
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	int GetCost() const { return Cost; }
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	virtual bool IsAlreadyUsed(ANaziZombieCharacter* Player) const { return false; }
+
+	virtual void Use(ANaziZombieCharacter* Player);
+	virtual bool GetIsUsed() const { return bIsUsed; }	
 };

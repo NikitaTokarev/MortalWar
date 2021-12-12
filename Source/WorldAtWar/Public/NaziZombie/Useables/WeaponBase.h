@@ -41,6 +41,9 @@ struct FWeaponDamage
 	float BaseDamage = 50.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float DamageInRage = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float HeadMultiplier = 3.5f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -171,12 +174,14 @@ protected:
 
 public:
 	virtual bool Fire(ANaziZombieCharacter* ShootingPlayer);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FWeaponDamage GetWeaponDamage() const { return WeaponDamage; }
 
 	virtual bool Reload(bool bMustUpdateInfo = true);
 
 	// 1 - MagazineAmmo, 2 - TotalAmmo
-	TArray<int32> GetCurrentAmmo() const;
+	TArray<int32> GetCurrentAmmo() const;		
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	int32 GetMaxMagazineAmmo() const { return MagazineMaxAmmo; }
@@ -213,4 +218,6 @@ public:
 	void DeactivateRageMode();
 	
 	bool IsFullAmmo() const { return CurrentTotalAmmo == WeaponMaxAmmo && CurrentMagazineAmmo == MagazineMaxAmmo; }
+
+	int8 GetWeaponSlot() const { return int8(WeaponID.GetValue()); }
 };

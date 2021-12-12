@@ -103,6 +103,7 @@ void ACharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ACharacterBase, WeaponArray);
 	DOREPLIFETIME_CONDITION(ACharacterBase, bIsAiming, COND_SkipOwner);
 	DOREPLIFETIME(ACharacterBase, bIsInfected);
+	DOREPLIFETIME_CONDITION(ACharacterBase, bIsRage, COND_OwnerOnly);
 }
 
 
