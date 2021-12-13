@@ -64,6 +64,20 @@ bool ANaziZombiePlayerState::DecrementPoints(int16 Value)
 }
 
 
+void ANaziZombiePlayerState::AddHeadshot()
+{
+	++Headshots;
+	OnHeadshot.Broadcast();
+}
+
+
+void ANaziZombiePlayerState::AddKnifing()
+{
+	++Knifings;
+	OnKnifing.Broadcast();
+}
+
+
 
 int32 ANaziZombiePlayerState::GetTotalScore() const
 {

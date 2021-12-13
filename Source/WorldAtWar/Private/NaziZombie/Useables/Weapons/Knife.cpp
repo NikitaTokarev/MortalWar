@@ -51,6 +51,8 @@ void AKnife::BeginPlay()
 	//SetReplicates(true);
 
 	//KnifeMesh->SetHiddenInGame(true);
+
+	SetActorHiddenInGame(true);
 }
 
 void AKnife::OnOverlapBegin(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

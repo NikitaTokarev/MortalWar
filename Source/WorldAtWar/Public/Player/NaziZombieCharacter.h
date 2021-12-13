@@ -200,6 +200,7 @@ public:
 	bool IsFullRage() const { return Rage == MaxRage; }
 	bool NeedAmmo(TEnumAsByte<EWeaponID> AmmoType) const;
 
+	UFUNCTION(BlueprintCallable)
 	void RecoveryHealth(float HealthAmount);
 	void RecoveryAmmo(TEnumAsByte<EWeaponID> AmmoType, int32 AmmoAmount);
 
@@ -208,5 +209,6 @@ public:
 	bool Server_ImposeDisease_Validate(float Time, float Damage);
 	void Server_ImposeDisease_Implementation(float Time, float Damage);
 
+	UFUNCTION(BlueprintCallable)
 	void DiseaseFinished();
 };

@@ -157,7 +157,7 @@ uint8 AZombieBase::GetHitPart(const FString& BoneName)
 {
 
 	// limb hit
-	if (BoneName.Contains(FString("L")) || BoneName.Contains(FString("R")))
+	if (BoneName.Contains(FString("Leg")) || BoneName.Contains(FString("Arm")) || BoneName.Contains(FString("Thigh")) || BoneName.Contains(FString("Calf")) || BoneName.Contains(FString("Foot")))
 	{
 		return 1;
 	}
@@ -214,6 +214,7 @@ int16 AZombieBase::GetPointsForHit(uint8 HitPart, FWeaponDamage WeaponDamage, AN
 	}
 	}
 
+	UE_LOG(LogTemp, Error, TEXT("Damage: %d"), DamageScoreKillScore[0]);
 
 	if (Health - DamageScoreKillScore[0] <= 0) // Kill
 	{

@@ -175,6 +175,7 @@ void ACharacterBase::OnRep_AttachWeapon()
 	if (PreviousWeapon)
 	{
 		PreviousWeapon->WeaponIsNowInHand(false);
+		//PreviousWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	}
 	if (CurrentWeapon)
 	{
@@ -197,16 +198,17 @@ void ACharacterBase::OnRep_AttachWeapon()
 			CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocket"));
 		}
 	}	
-	if (!HasAuthority())
+	if (!HasAuthority() || IsLocallyControlled())
 	{
-		if (WeaponArray.Num() > 1)
+		PreviousWeapon = CurrentWeapon;
+		/*if (WeaponArray.Num() > 1)
 		{
 			PreviousWeapon = CurrentWeapon == WeaponArray[0] ? WeaponArray[1] : WeaponArray[0];
 		}
 		else
 		{
 			PreviousWeapon = CurrentWeapon;
-		}
+		}*/
 	}
 	
 		

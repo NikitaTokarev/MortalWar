@@ -36,9 +36,11 @@ USTRUCT(BlueprintType)
 struct FWeaponDamage
 {
 	GENERATED_BODY()
-
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float BaseDamage = 50.0f;
+
+	float Damage = 50.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float DamageInRage = 1.0f;
@@ -60,11 +62,11 @@ struct FWeaponDamage
 		switch (HitLocation)
 		{
 		case Head:
-			return BaseDamage * HeadMultiplier;
+			return Damage * HeadMultiplier;
 		case Torso:
-			return BaseDamage * TorsoMultiplier;
+			return Damage * TorsoMultiplier;
 		default:
-			return BaseDamage;
+			return Damage;
 		}
 	}
 };
@@ -170,6 +172,11 @@ protected:
 	void Multi_Reload(bool bMustUpdateInfo = true);
 	bool Multi_Reload_Validate(bool bMustUpdateInfo = true);
 	virtual void Multi_Reload_Implementation(bool bMustUpdateInfo = true);
+
+	UFUNCTION(BlueprintCallable)
+	void AddBonusDamage(float BonusDamage) {
+		UE_LOG(LogTemp, Error, TEXT("Damage Incremented"));
+		WeaponDamage.Damage += BonusDamage; }
 
 
 public:

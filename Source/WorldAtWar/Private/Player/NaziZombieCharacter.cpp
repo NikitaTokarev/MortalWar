@@ -216,6 +216,7 @@ void ANaziZombieCharacter::EquipWeapon(AWeaponBase* NewWeapon)
 
 		if (WeaponArray.IsValidIndex(WeaponSlot))
 		{
+			WeaponArray[WeaponSlot]->SetLifeSpan(0.1f);
 			WeaponArray[WeaponSlot] = NewWeapon;
 		}
 		else

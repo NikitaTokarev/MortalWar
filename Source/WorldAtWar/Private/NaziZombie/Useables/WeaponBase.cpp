@@ -6,6 +6,7 @@
 #include "NaziZombie/Zombie/ZombieBase.h"
 
 #include "Components/SkeletalMeshComponent.h"
+#include "Camera/CameraComponent.h"
 //#include "DrawDebugHelpers.h"
 #include "Animation/AnimInstance.h"
 #include "Net/UnrealNetwork.h"
@@ -48,7 +49,7 @@ void AWeaponBase::BeginPlay()
 	Super::BeginPlay();
 	WeaponMesh->SetHiddenInGame(true);
 
-
+	WeaponDamage.Damage = WeaponDamage.BaseDamage;
 	CurrentTotalAmmo = WeaponMaxAmmo;
 	CurrentMagazineAmmo = MagazineMaxAmmo;
 		
@@ -74,8 +75,8 @@ void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 
 TArray<FHitResult> AWeaponBase::PerformLineTrace(ANaziZombieCharacter* ShootingPlayer)
 {
-	FVector Start = WeaponMesh->GetSocketLocation(FName("muzzleSocket"));
-	FVector Rot = WeaponMesh->GetSocketRotation(FName("muzzleSocket")).Vector();
+	FVector Start = ShootingPlayer->GetFirstPersonCameraComponent()->GetComponentLocation(); //WeaponMesh->GetSocketLocation(FName("muzzleSocket"));
+	FVector Rot = ShootingPlayer->GetFirstPersonCameraComponent()->GetForwardVector(); //WeaponMesh->GetSocketRotation(FName("muzzleSocket")).Vector();
 	FVector End = Start + Rot * 5000.0f;
 
 	TArray<FHitResult> HitResults;
@@ -88,7 +89,7 @@ TArray<FHitResult> AWeaponBase::PerformLineTrace(ANaziZombieCharacter* ShootingP
 
 
 	GetWorld()->LineTraceMultiByChannel(OUT HitResults, Start, End, ECollisionChannel::ECC_GameTraceChannel2, CollisionParams, CollisionResponse);
-	//DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.0f, 0, 3.0f);
+	//DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 8.0f, 0, 3.0f);
 
 	return HitResults;
 }
@@ -459,7 +460,7 @@ void AWeaponBase::ActivateRageMode()
 {
 	if (WeaponDamage.DamageInRage != 1.0f)
 	{
-		WeaponDamage.BaseDamage *= WeaponDamage.DamageInRage;
+		WeaponDamage.Damage += WeaponDamage.BaseDamage * (WeaponDamage.DamageInRage - 1.0f);
 	}
 
 	BeforeRage_MagazineMaxAmmo = MagazineMaxAmmo;
@@ -477,7 +478,7 @@ void AWeaponBase::DeactivateRageMode()
 {
 	if (WeaponDamage.DamageInRage != 1.0f)
 	{
-		WeaponDamage.BaseDamage /= WeaponDamage.DamageInRage;
+		WeaponDamage.Damage -= WeaponDamage.BaseDamage * (WeaponDamage.DamageInRage - 1.0f);
 	}
 
 	MagazineMaxAmmo = BeforeRage_MagazineMaxAmmo;

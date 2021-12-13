@@ -8,7 +8,8 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPointsChanged, int32, Points);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHeadshot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnKnifing);
 
 UCLASS()
 class WORLDATWAR_API ANaziZombiePlayerState : public APlayerState
@@ -34,6 +35,12 @@ protected:
 	UPROPERTY(BlueprintAssignable)
 	FPointsChanged OnPointsChanged;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnHeadshot OnHeadshot;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnKnifing OnKnifing;
+
 	UFUNCTION()		
 	void OnRep_PointsChanged();
 
@@ -47,8 +54,8 @@ public:
 	bool DecrementPoints(int16 Value);
 
 	void AddKill() { ++Kills; }
-	void AddHeadshot() { ++Headshots; }
-	void AddKnifing() { ++Knifings; }
+	void AddHeadshot();
+	void AddKnifing();
 
 	UFUNCTION(BlueprintCallable)
 	int32 GetTotalScore() const;
