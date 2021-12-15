@@ -71,10 +71,10 @@ void ANaziZombiePlayerState::AddHeadshot()
 }
 
 
-void ANaziZombiePlayerState::AddKnifing()
+void ANaziZombiePlayerState::AddKnifing(class AZombieBase* SlainEnemy)
 {
 	++Knifings;
-	OnKnifing.Broadcast();
+	OnKnifing.Broadcast(SlainEnemy);
 }
 
 

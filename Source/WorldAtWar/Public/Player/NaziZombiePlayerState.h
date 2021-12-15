@@ -8,8 +8,9 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPointsChanged, int32, Points);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnKnifing, class AZombieBase*, SlainEnemy);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHeadshot);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnKnifing);
+
 
 UCLASS()
 class WORLDATWAR_API ANaziZombiePlayerState : public APlayerState
@@ -55,7 +56,7 @@ public:
 
 	void AddKill() { ++Kills; }
 	void AddHeadshot();
-	void AddKnifing();
+	void AddKnifing(class AZombieBase* SlainEnemy);
 
 	UFUNCTION(BlueprintCallable)
 	int32 GetTotalScore() const;

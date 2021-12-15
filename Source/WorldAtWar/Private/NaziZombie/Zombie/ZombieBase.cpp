@@ -309,7 +309,7 @@ void AZombieBase::Hit_Knife(ANaziZombieCharacter* Player, float BaseDamage, floa
 			if (Health - (BaseDamage + AdditionalDamage) <= 0)
 			{
 				PState->AddKill();
-				PState->AddKnifing();
+				PState->AddKnifing(this);
 
 				Player->IncrementRage(RageForKilling);
 			}
@@ -363,6 +363,7 @@ void AZombieBase::ActivateBuff(float ActiveTime, bool bIsEternal)
 
 
 
+
 void AZombieBase::DeactivateBuff()
 {
 	Health /= 1.5;
@@ -370,3 +371,7 @@ void AZombieBase::DeactivateBuff()
 }
 
 
+FName AZombieBase::GetChestBone_Implementation() const
+{
+	return FName("Spine2");
+}

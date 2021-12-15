@@ -109,4 +109,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void DisableDrop() { bSpawnPickupAfterDeath = false; }
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure)
+	FName GetChestBone() const;
+	FName GetChestBone_Implementation() const;
 };

@@ -82,7 +82,7 @@ public:
 	AWeaponBase();
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Nazi Zombie Settings")
 	USkeletalMeshComponent* WeaponMesh;
 
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
