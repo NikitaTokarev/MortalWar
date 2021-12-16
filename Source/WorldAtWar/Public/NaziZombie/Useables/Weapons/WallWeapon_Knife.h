@@ -18,7 +18,7 @@ public:
 	AWallWeapon_Knife();
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Nazi Zombie Settings")
 	TSubclassOf<class AKnife> KnifeClass;
 
 	virtual void BeginPlay() override;

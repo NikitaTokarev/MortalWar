@@ -18,7 +18,7 @@ public:
 	AWallWeapon_Firearms();
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Nazi Zombie Settings")
 	TSubclassOf<class AWeaponBase> WeaponClass;
 
 protected:

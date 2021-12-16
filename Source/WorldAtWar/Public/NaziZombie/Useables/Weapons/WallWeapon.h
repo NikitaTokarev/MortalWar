@@ -23,7 +23,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Nazi Zombie Settings")
 	USceneComponent* SceneComponent;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Nazi Zombie Settings")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Nazi Zombie Settings")
 	UStaticMeshComponent* WallWeaponMesh;
 		
 
