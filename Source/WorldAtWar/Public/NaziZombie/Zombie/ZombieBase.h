@@ -97,6 +97,9 @@ protected:
 	UFUNCTION()
 	void SpawnPickupAfterDeath(TSubclassOf<class APickupBase> PickupClass, FVector Location);
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "VFX")
+	void PlayBuffVFX();
+
 public:
 	void Hit(ANaziZombieCharacter* Player, FHitResult HitResult);
 	void Hit_Knife(ANaziZombieCharacter* Player, float BaseDamage, float RageForKilling);

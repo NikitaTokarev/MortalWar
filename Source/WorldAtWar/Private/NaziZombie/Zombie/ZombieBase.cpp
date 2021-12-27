@@ -359,6 +359,8 @@ void AZombieBase::ActivateBuff(float ActiveTime, bool bIsEternal)
 		FTimerHandle TempHandle;
 		GetWorldTimerManager().SetTimer(TempHandle, this, &AZombieBase::DeactivateBuff, ActiveTime, false);
 	}
+
+	PlayBuffVFX();
 }
 
 
