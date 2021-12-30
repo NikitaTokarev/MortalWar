@@ -28,7 +28,7 @@ protected:
 		
 
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
-	bool bIsRespawnables = true;
+	bool bIsRespawnables = false;
 
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings", meta = (EditCondition = "bIsRespawnables"))
 	float RespawnTime;
@@ -45,8 +45,19 @@ protected:
 	virtual bool CanBeTaken(ANaziZombieCharacter* Player) const;
 	virtual void TakeWeapon(ANaziZombieCharacter* Player);
 
+	virtual uint32 CalculateCost(class ANaziZombieCharacter* Player) const { return Cost; }
+
 	void SetObjectCanBeUsed();
+
+	UFUNCTION(BlueprintCallable)
+	void SetNewCost(int32 NewCost);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void ChangeUIMessage();
 
 public:
 	virtual void Use(ANaziZombieCharacter* Player) override;
+
+	UFUNCTION(BlueprintCallable)
+	void MakeRespawnable(float ObjectRespawnTime);
 };

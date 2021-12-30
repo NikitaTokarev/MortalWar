@@ -13,6 +13,7 @@ class ANaziZombieCharacter;
 class AZombieBase;
 class ANaziZombieGameState;
 
+
 USTRUCT(BlueprintType)
 struct FZombieWave
 {
@@ -35,7 +36,13 @@ protected:
 	ANaziZombieGameState* ZombieGameState;
 
 	UPROPERTY(EditDefaultsOnly)
-	TArray<FZombieWave> ZombiesWaves;
+	uint8 MaxZombiesOnMap = 30;
+
+	UPROPERTY(EditDefaultsOnly)
+	uint8 ZombieSpawnRatio = 10;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FZombieWave> ZombiesWaves;	
 
 	bool bHasLoadedSpawnPoints;
 	TArray<ANaziZombiePlayerSpawnPoint*> PlayerSpawnPoints;	
@@ -48,6 +55,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "NaziZombieSettings")
 	TSubclassOf<AZombieBase> ZombieClass;
+		
 
 	FTimerHandle TZombieSpawnHandle;
 	FTimerHandle TTimesUpHandle;
@@ -68,7 +76,10 @@ protected:
 
 	void SetSpawnPoints();
 
-public:
+public:	
 	void NewZoneActive(uint8 ZoneNumber);
 	void ZombieKilled();
+
+	UFUNCTION(BlueprintCallable)
+	void AddNewZombieSpawnPoints(TArray<ANaziZombieZombieSpawnPoint*> NewSpawnPoints);
 };

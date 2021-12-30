@@ -56,3 +56,14 @@ bool AWallWeapon_Firearms::IsAlreadyUsed(ANaziZombieCharacter* Player) const
 {
 	return Player->CheckWeaponClass(WeaponClass) != nullptr;
 }
+
+
+uint32 AWallWeapon_Firearms::CalculateCost(ANaziZombieCharacter* Player) const
+{
+	return IsAlreadyUsed(Player) ? Cost / 2 : Cost;
+}
+
+int AWallWeapon_Firearms::GetCost(ANaziZombieCharacter* Player) const
+{
+	return int(CalculateCost(Player));
+}

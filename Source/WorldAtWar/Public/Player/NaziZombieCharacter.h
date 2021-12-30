@@ -13,6 +13,7 @@ class AWeaponBase;
 class UAnimMontage;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractChanged, AInteractableBase*, InteractableObject);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteracted, AInteractableBase*, InteractableObject);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHealthChanged, float, NewHealth);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRageChanged, float, NewRage);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDeathDelegate);
@@ -76,6 +77,9 @@ protected:
 
 	UPROPERTY(BlueprintAssignable)
 	FInteractChanged OnInteractChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnInteracted OnInteracted;
 
 	UPROPERTY(BlueprintAssignable)
 	FKnifeAttackDelegate OnKnifing;

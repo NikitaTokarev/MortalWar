@@ -7,6 +7,7 @@
 #include "NaziZombieGameState.generated.h"
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNewRoundStarted, int32, NewRound);
 
 
 UCLASS()
@@ -25,6 +26,9 @@ protected:
 	uint8 ZombiesOnMap;
 	uint16 TotalZombiesRemaining;
 	float ZombieHealthMult;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnNewRoundStarted OnNewRoundStarted;
 
 public:
 	uint16 GetRoundNumber() const;

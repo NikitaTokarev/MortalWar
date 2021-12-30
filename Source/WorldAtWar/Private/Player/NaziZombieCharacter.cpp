@@ -240,6 +240,8 @@ void ANaziZombieCharacter::EquipWeapon(AWeaponBase* NewWeapon)
 void ANaziZombieCharacter::EquipKnife(AKnife* NewKnife)
 {
 	Knife = NewKnife;
+
+	OnEquipNewWeapon.Broadcast(nullptr);
 }
 
 
@@ -260,6 +262,9 @@ uint32 ANaziZombieCharacter::GetPoints() const
 
 AWeaponBase* ANaziZombieCharacter::CheckWeaponClass(TSubclassOf<AWeaponBase> Weapon) const
 {
+	if (!this)
+		return nullptr;
+
 	for (auto It : WeaponArray)
 	{
 		if (It->GetClass() == Weapon)
@@ -285,6 +290,7 @@ void ANaziZombieCharacter::Interact()
 			Server_Interact(Interactable);
 		}
 
+		OnInteracted.Broadcast(Interactable);
 	}
 }
 
@@ -301,6 +307,7 @@ void ANaziZombieCharacter::Server_Interact_Implementation(AInteractableBase* Int
 	{
 		InteractingObject->Use(this);
 	}
+	
 }
 
 

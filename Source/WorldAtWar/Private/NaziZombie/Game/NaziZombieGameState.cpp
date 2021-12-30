@@ -28,6 +28,7 @@ void ANaziZombieGameState::IncrementRoundNumber()
 	{
 		ZombieHealthMult *= 1.05f;
 	}
+	OnNewRoundStarted.Broadcast(RoundNumber);
 }
 
 void ANaziZombieGameState::SetTotalZombiesRemaining(const uint16& ZombieCount)

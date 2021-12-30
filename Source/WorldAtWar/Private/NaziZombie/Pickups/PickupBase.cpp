@@ -43,9 +43,7 @@ void APickupBase::BeginPlay()
 			const AActor* RandomPoint = RespawnPoints[RandomIndex];
 			checkf(RandomPoint, TEXT("Respawn Point Is Not Valid"));
 
-			SetActorLocation(RandomPoint->GetActorLocation());
-			
-			
+			SetActorLocation(RandomPoint->GetActorLocation());			
 		}		
 	}
 	
@@ -138,7 +136,7 @@ bool APickupBase::Multi_Respawn_Validate()
 }
 
 void APickupBase::Multi_Respawn_Implementation()
-{	
+{		
 	if (GetRootComponent())
 	{
 		GetRootComponent()->SetVisibility(true, true);		

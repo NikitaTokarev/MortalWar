@@ -149,7 +149,7 @@ void AWeaponBase::Server_Fire_Implementation(const TArray<FHitResult>& HitResult
 						}
 
 					}
-					UE_LOG(LogTemp, Warning, TEXT("Actor Name: %s"), *HitActor->GetName());
+					//UE_LOG(LogTemp, Warning, TEXT("Actor Name: %s"), *HitActor->GetName());
 
 				}
 			}
@@ -260,7 +260,7 @@ bool AWeaponBase::Fire(ANaziZombieCharacter* ShootingPlayer)
 					{
 						Zombie->Hit(ShootingPlayer, Result);
 					}
-					UE_LOG(LogTemp, Warning, TEXT("Actor Name: %s"), *HitActor->GetName());
+					//UE_LOG(LogTemp, Warning, TEXT("Actor Name: %s"), *HitActor->GetName());
 				}
 			}
 		}
@@ -433,7 +433,7 @@ void AWeaponBase::RecoveryAmmo(int32 Amount, bool bFull)
 			CurrentTotalAmmo = FMath::Min(CurrentTotalAmmo + Amount, WeaponMaxAmmo);
 		}
 		//CurrentMagazineAmmo = FMath::Min(CurrentMagazineAmmo + Amount, MagazineMaxAmmo);
-		UE_LOG(LogTemp, Error, TEXT("Ammo: %d"), CurrentMagazineAmmo);
+		//UE_LOG(LogTemp, Error, TEXT("Ammo: %d"), CurrentMagazineAmmo);
 	}
 	
 	Client_CallAmmoChangedDelegate(CurrentMagazineAmmo, CurrentTotalAmmo);

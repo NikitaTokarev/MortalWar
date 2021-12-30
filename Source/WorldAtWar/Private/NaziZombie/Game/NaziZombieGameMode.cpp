@@ -58,6 +58,10 @@ void ANaziZombieGameMode::BeginPlay()
 
 	}
 
+	const FString MapName = GetWorld()->GetFName().ToString();
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *MapName);	
+
+
 	GetWorld()->GetTimerManager().SetTimer(TZombieSpawnHandle, this, &ANaziZombieGameMode::SpawnZombie, 1.0f, true);
 	GetWorld()->GetTimerManager().PauseTimer(TZombieSpawnHandle);
 	CalculateZombieCount();
@@ -68,7 +72,7 @@ void ANaziZombieGameMode::CalculateZombieCount()
 {
 	if (ZombieGameState)
 	{
-		if (ZombieGameState->GetTotalZombiesRemaining() >= 40)
+		if (ZombieGameState->GetTotalZombiesRemaining() >= MaxZombiesOnMap)
 		{
 			if (TTimesUpHandle.IsValid())
 			{
@@ -83,23 +87,25 @@ void ANaziZombieGameMode::CalculateZombieCount()
 
 		uint16 RoundNumber = ZombieGameState->GetRoundNumber();
 		uint8 PlayerCount = ZombieGameState->PlayerArray.Num();
-		uint8 MaxZombiesOnMapAtOnce = 24;
+		//uint8 MaxZombiesOnMapAtOnce = 14;
 
 		if (PlayerCount > 1)
 		{
-			MaxZombiesOnMapAtOnce += PlayerCount * 6;
+			ZombieSpawnRatio += PlayerCount * 2;
 		}
 
 		if (RoundNumber > 0 && RoundNumber <= 5)
 		{
-			ZombiesRemaining = FMath::FloorToInt((RoundNumber * 0.3f) * MaxZombiesOnMapAtOnce);
+			ZombiesRemaining = FMath::Max(FMath::FloorToInt((RoundNumber * 0.3f) * ZombieSpawnRatio) + FMath::RandRange(1,3), 5);
 		}
 		else
 		{
-			ZombiesRemaining = FMath::FloorToInt((RoundNumber * 0.2f) * MaxZombiesOnMapAtOnce);
+			ZombiesRemaining = FMath::FloorToInt((RoundNumber * 0.15f) * ZombieSpawnRatio) + FMath::RandRange(0,2);
 		}
 		
-		ZombiesRemaining = FMath::Min(ZombiesRemaining, uint16(40 - ZombieGameState->GetTotalZombiesRemaining()));
+		UE_LOG(LogTemp, Warning, TEXT("Zombie: %d"), ZombiesRemaining);
+
+		ZombiesRemaining = FMath::Min(ZombiesRemaining, uint16(MaxZombiesOnMap - ZombieGameState->GetTotalZombiesRemaining()));
 
 		ZombieGameState->SetTotalZombiesRemaining(ZombiesRemaining);
 		GetWorld()->GetTimerManager().UnPauseTimer(TZombieSpawnHandle);
@@ -223,7 +229,7 @@ void ANaziZombieGameMode::ZombieKilled()
 }
 
 
-///////////////////////////////////////// PLAYER ////////////////////////////////////////
+
 
 
 void ANaziZombieGameMode::SetSpawnPoints()
@@ -266,7 +272,7 @@ void ANaziZombieGameMode::PostLogin(APlayerController* NewPlayer)
 		if (!SpawnPoint->IsUsed())
 		{
 			FVector SpawnLocation = SpawnPoint->GetActorLocation();
-			if (APawn* Pawn = GetWorld()->SpawnActor<APawn>(PlayerClass, SpawnLocation, FRotator::ZeroRotator))
+			if (APawn* Pawn = GetWorld()->SpawnActor<APawn>(PlayerClass, SpawnLocation, SpawnPoint->GetActorRotation()))
 			{
 				UE_LOG(LogTemp, Warning, TEXT("SPAWNED PAWN TO POSSESS"));
 				NewPlayer->Possess(Pawn);
@@ -274,5 +280,18 @@ void ANaziZombieGameMode::PostLogin(APlayerController* NewPlayer)
 				return;
 			}
 		}
+	}
+}
+
+
+
+void ANaziZombieGameMode::AddNewZombieSpawnPoints(TArray<ANaziZombieZombieSpawnPoint*> NewSpawnPoints)
+{
+	for (auto SpawnPoint : NewSpawnPoints)
+	{
+		SpawnPoint->Activate();
+
+		ZombieSpawnPoints.Add(SpawnPoint);
+		ActiveZombieSpawnPoints.Add(SpawnPoint);
 	}
 }

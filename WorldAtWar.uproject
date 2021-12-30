@@ -38,12 +38,28 @@
 			"Enabled": true
 		},
 		{
-			"Name": "ModelingToolsEditorMode",
-			"Enabled": true
+			"Name": "ActorLayerUtilities",
+			"Enabled": false
 		},
 		{
-			"Name": "StaticMeshEditorExtension",
-			"Enabled": true
+			"Name": "ActorSequence",
+			"Enabled": false
+		},
+		{
+			"Name": "AlembicImporter",
+			"Enabled": false
+		},
+		{
+			"Name": "AppleImageUtils",
+			"Enabled": false
+		},
+		{
+			"Name": "AppleMoviePlayer",
+			"Enabled": false
+		},
+		{
+			"Name": "XCodeSourceCodeAccess",
+			"Enabled": false
 		}
 	]
 }

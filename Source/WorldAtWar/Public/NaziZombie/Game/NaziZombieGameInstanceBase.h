@@ -9,23 +9,23 @@
 
 class UTexture2D;
 
-USTRUCT(BlueprintType)
-struct FMapInfo
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString MapURL;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString MapName;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString MapDescription;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTexture2D* MapImage;
-};
+//USTRUCT(BlueprintType)
+//struct FMapInfo
+//{
+//	GENERATED_BODY()
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//	FString MapURL;
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//	FString MapName;
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//	FString MapDescription;
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//	UTexture2D* MapImage;
+//};
 
 USTRUCT(BlueprintType)
 struct FServerData

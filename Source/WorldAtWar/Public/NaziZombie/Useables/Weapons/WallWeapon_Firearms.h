@@ -26,6 +26,9 @@ protected:
 	virtual bool CanBeTaken(ANaziZombieCharacter* Player) const override;
 	virtual void TakeWeapon(ANaziZombieCharacter* Player) override;
 
+	virtual uint32 CalculateCost(class ANaziZombieCharacter* Player) const override;
+	virtual int GetCost(ANaziZombieCharacter* Player) const override;
+
 public:
 	virtual bool IsAlreadyUsed(ANaziZombieCharacter* Player) const override;
 	

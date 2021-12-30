@@ -64,18 +64,20 @@ void AWallWeapon::BeginPlay()
 
 void AWallWeapon::Use(ANaziZombieCharacter* Player)
 {
-	if (Player && Player->GetPoints() >= Cost && CanBeTaken(Player))
+	uint32 FinalCost = CalculateCost(Player);
+
+	if (Player && Player->GetPoints() >= FinalCost && CanBeTaken(Player))
 	{		
 		TakeWeapon(Player);
 
 		if (HasAuthority())
 		{
 			ANaziZombiePlayerState* PState = Player->GetPlayerState<ANaziZombiePlayerState>();
-			PState->DecrementPoints(Cost);
+			PState->DecrementPoints(FinalCost);
 			bIsUsed = true;
 			OnRep_ObjectUsed();
 
-			if (RespawnPoints.Num() != 0)
+			if (bIsRespawnables && RespawnPoints.Num() != 0)
 			{
 				int32 RandomIndex = FMath::RandRange(0, RespawnPoints.Num() - 1);
 				const AActor* RandomPoint = RespawnPoints[RandomIndex];
@@ -83,9 +85,14 @@ void AWallWeapon::Use(ANaziZombieCharacter* Player)
 
 				SetActorLocationAndRotation(RandomPoint->GetActorLocation(), RandomPoint->GetActorRotation());
 			}
+			else
+			{
+				SetLifeSpan(0.2f);
+			}
 		}
 	}
 }
+
 
 
 
@@ -118,4 +125,20 @@ void AWallWeapon::SetObjectCanBeUsed()
 {
 	bIsUsed = false;
 	OnRep_ObjectUsed();
+}
+
+
+
+void AWallWeapon::SetNewCost(int32 NewCost)
+{
+	Cost = NewCost;
+
+	ChangeUIMessage();
+}
+
+
+void AWallWeapon::MakeRespawnable(float ObjectRespawnTime)
+{
+	bIsRespawnables = true;
+	RespawnTime = ObjectRespawnTime;
 }
