@@ -224,15 +224,18 @@ void ANaziZombieCharacter::EquipWeapon(AWeaponBase* NewWeapon)
 			WeaponArray.Add(NewWeapon);
 			OnEquipNewWeapon.Broadcast(NewWeapon);
 		}
-		CurrentWeapon = NewWeapon;
-		OnRep_AttachWeapon();
+
+		if (!CurrentWeapon->GetIsReloading())
+		{
+			CurrentWeapon = NewWeapon;
+			OnRep_AttachWeapon();
+			WeaponIndex = (WeaponIndex + 1) % WeaponArray.Num();
+		}		
 	}
 	else
 	{
 		Server_EquipWeapon(NewWeapon);
-	}
-
-	WeaponIndex = (WeaponIndex + 1) % WeaponArray.Num();
+	}	
 }
 
 

@@ -77,13 +77,16 @@ void AWallWeapon::Use(ANaziZombieCharacter* Player)
 			bIsUsed = true;
 			OnRep_ObjectUsed();
 
-			if (bIsRespawnables && RespawnPoints.Num() != 0)
+			if (bIsRespawnables)
 			{
-				int32 RandomIndex = FMath::RandRange(0, RespawnPoints.Num() - 1);
-				const AActor* RandomPoint = RespawnPoints[RandomIndex];
-				checkf(RandomPoint, TEXT("Respawn Point Is Not Valid"));
+				if (RespawnPoints.Num() != 0)
+				{
+					int32 RandomIndex = FMath::RandRange(0, RespawnPoints.Num() - 1);
+					const AActor* RandomPoint = RespawnPoints[RandomIndex];
+					checkf(RandomPoint, TEXT("Respawn Point Is Not Valid"));
 
-				SetActorLocationAndRotation(RandomPoint->GetActorLocation(), RandomPoint->GetActorRotation());
+					SetActorLocationAndRotation(RandomPoint->GetActorLocation(), RandomPoint->GetActorRotation());
+				}					
 			}
 			else
 			{

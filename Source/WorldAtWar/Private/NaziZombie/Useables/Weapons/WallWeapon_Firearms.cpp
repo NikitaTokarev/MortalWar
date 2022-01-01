@@ -33,7 +33,7 @@ void AWallWeapon_Firearms::TakeWeapon(ANaziZombieCharacter* Player)
 	if (AWeaponBase* ExistingWeapon = Player->CheckWeaponClass(WeaponClass)) // Already Equip?
 	{
 		ExistingWeapon->RecoveryAmmo(0, true);
-		if (ExistingWeapon != Player->GetCurrentWeapon())
+		if (ExistingWeapon != Player->GetCurrentWeapon() && !Player->GetCurrentWeapon()->GetIsReloading())
 		{
 			Player->SwitchNextWeapon(true);
 		}

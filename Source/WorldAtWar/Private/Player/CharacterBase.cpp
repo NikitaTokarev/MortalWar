@@ -198,7 +198,7 @@ void ACharacterBase::OnRep_AttachWeapon()
 			CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocket"));
 		}
 	}	
-	if (!HasAuthority() || IsLocallyControlled())
+	if (IsLocallyControlled())
 	{
 		PreviousWeapon = CurrentWeapon;
 		/*if (WeaponArray.Num() > 1)
