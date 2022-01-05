@@ -7,7 +7,7 @@
 
 #include "Components/SkeletalMeshComponent.h"
 #include "Camera/CameraComponent.h"
-//#include "DrawDebugHelpers.h"
+#include "DrawDebugHelpers.h"
 #include "Animation/AnimInstance.h"
 #include "Net/UnrealNetwork.h"
 
@@ -259,6 +259,12 @@ bool AWeaponBase::Fire(ANaziZombieCharacter* ShootingPlayer)
 					if (AZombieBase* Zombie = Cast<AZombieBase>(HitActor))
 					{
 						Zombie->Hit(ShootingPlayer, Result);
+						
+						if (FMath::RandRange(0.0f, 1.0f) > 0.55f)
+						{
+							OnWeaponHit.Broadcast(Zombie, Result.Location);
+						}						
+						break;
 					}
 					//UE_LOG(LogTemp, Warning, TEXT("Actor Name: %s"), *HitActor->GetName());
 				}
@@ -289,6 +295,45 @@ bool AWeaponBase::Fire(ANaziZombieCharacter* ShootingPlayer)
 	return false;
 }
 
+
+
+void AWeaponBase::CalculateRicochet(AZombieBase* TargetEnemy, const FVector HitLocation, const FVector ForwardVector)
+{
+	FVector End = HitLocation + ForwardVector * 500.0f;
+
+	TArray<FHitResult> HitResults;
+	FCollisionQueryParams CollisionParams;
+
+	CollisionParams.AddIgnoredActor(this);
+	CollisionParams.AddIgnoredActor(TargetEnemy);
+
+	if (GetOwner()) CollisionParams.AddIgnoredActor(GetOwner());
+
+	FCollisionResponseParams CollisionResponse;
+
+
+	GetWorld()->LineTraceMultiByChannel(OUT HitResults, HitLocation, End, ECollisionChannel::ECC_GameTraceChannel2, CollisionParams, CollisionResponse);
+	DrawDebugLine(GetWorld(), HitLocation, End, FColor::Red, false, 2.0f, 0, 3.0f);
+
+	if (HitResults.Num() > 0)
+	{
+		for (FHitResult& Result : HitResults)
+		{
+			FString HitBone = Result.BoneName.ToString();
+
+			if (AActor* HitActor = Result.GetActor())
+			{
+				if (AZombieBase* Zombie = Cast<AZombieBase>(HitActor))
+				{
+					Zombie->Hit(Cast<ANaziZombieCharacter>(GetOwner()), Result);
+					OnWeaponHit.Broadcast(Zombie, Result.Location);
+					break;
+				}
+				//UE_LOG(LogTemp, Warning, TEXT("Actor Name: %s"), *HitActor->GetName());
+			}
+		}
+	}
+}
 
 
 

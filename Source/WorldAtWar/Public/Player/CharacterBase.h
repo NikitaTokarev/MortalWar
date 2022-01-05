@@ -48,8 +48,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
 	TSubclassOf<AWeaponBase> StartingWeaponClass;
 
-	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
-	TSubclassOf<AWeaponBase> SecondWeaponClass;
+	/*UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
+	TSubclassOf<AWeaponBase> SecondWeaponClass;*/
 
 	UPROPERTY(ReplicatedUsing = OnRep_AttachWeapon)
 	AWeaponBase* CurrentWeapon;	
@@ -150,6 +150,9 @@ protected:
 
 	// called when looking up/down
 	void LookUpAtRate(float Rate);
+
+	UFUNCTION(BlueprintCallable)
+	TArray<AWeaponBase*> GetWeaponsArray() const { return WeaponArray; }
 	
 
 public:
@@ -171,6 +174,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SwitchNextWeapon(bool bIsNext);
+
+	void SwitchNextWeapon(int8 WeaponSlot);
 
 	bool GetIsInfected() const { return bIsInfected; }
 };

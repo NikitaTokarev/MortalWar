@@ -13,6 +13,7 @@ class UAnimationAsset;
 class UAnimMontage;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAmmoChanged, int32, CurrentMagazineAmmo, int32, CurrentTotalAmmo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnWeaponHit, class AZombieBase*, TargetEnemy, const FVector, HitLocation);
 
 UENUM(BlueprintType)
 enum EHitLocation
@@ -124,6 +125,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
 	FWeaponDamage WeaponDamage;	
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Nazi Zombie Settings")
+	bool bIsFullAuto = false;
+
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	int32 CurrentTotalAmmo;
 
@@ -132,6 +136,9 @@ protected:
 
 	UPROPERTY(BlueprintAssignable)
 	FAmmoChanged OnAmmoChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnWeaponHit OnWeaponHit;
 	
 	bool bCanFire;
 	void ControlFireDelay();
@@ -174,10 +181,10 @@ protected:
 	virtual void Multi_Reload_Implementation(bool bMustUpdateInfo = true);
 
 	UFUNCTION(BlueprintCallable)
-	void AddBonusDamage(float BonusDamage) {
-		UE_LOG(LogTemp, Error, TEXT("Damage Incremented"));
-		WeaponDamage.Damage += BonusDamage; }
+	void AddBonusDamage(float BonusDamage) {WeaponDamage.Damage += BonusDamage; }
 
+	UFUNCTION(BlueprintCallable)
+	void CalculateRicochet(class AZombieBase* TargetEnemy, const FVector HitLocation, const FVector ForwardVector);
 
 public:
 	virtual bool Fire(ANaziZombieCharacter* ShootingPlayer);
@@ -202,7 +209,9 @@ public:
 	TEnumAsByte<EWeaponID> GetWeaponID() const { return WeaponID; }
 	void WeaponIsNowInHand(bool InHand);
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool GetCanFire() const { return bCanFire; }
+
 	bool GetIsReloading() const { return bIsReloading; }
 
 	float GetRageForKilling() const { return WeaponDamage.RageForKilling; }

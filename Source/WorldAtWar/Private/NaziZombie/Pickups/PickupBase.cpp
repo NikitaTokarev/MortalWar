@@ -37,6 +37,8 @@ void APickupBase::BeginPlay()
 		SetReplicates(true);
 		SetReplicateMovement(true);
 
+		CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &APickupBase::OnOverlapBegin);
+
 		if (RespawnPoints.Num() != 0 && bChangeLocationOnBegin)
 		{
 			int32 RandomIndex = FMath::RandRange(0, RespawnPoints.Num() - 1);
@@ -58,19 +60,24 @@ bool APickupBase::CouldBeTaken() const
 }
 
 
-void APickupBase::NotifyActorBeginOverlap(AActor* OtherActor)
+void APickupBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+									int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (HasAuthority())
 	{
 		const auto Player = Cast<ANaziZombieCharacter>(OtherActor);
-		if (Player && CanTakePickup(Player))
-		{
+		if (Player && OtherComp->GetClass() != Player->GetInteractableCompClass() && CanTakePickup(Player))
+		{			
 			Multi_PickupWasTaken();
 			GivePickupTo(Player);
-		}
-		Super::NotifyActorBeginOverlap(OtherActor);
-	}		
+		}		
+	}
 }
+
+//void APickupBase::NotifyActorBeginOverlap(AActor* OtherActor)
+//{
+//	
+//}
 
 bool APickupBase::CanTakePickup(ANaziZombieCharacter* Player)
 {
@@ -81,6 +88,8 @@ void APickupBase::GivePickupTo(ANaziZombieCharacter* Player)
 {	
 
 }
+
+
 
 
 

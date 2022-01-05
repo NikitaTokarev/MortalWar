@@ -215,4 +215,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void DiseaseFinished();
+
+	UClass* GetInteractableCompClass() const;
 };

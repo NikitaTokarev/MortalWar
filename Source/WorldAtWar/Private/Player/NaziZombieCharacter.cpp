@@ -216,20 +216,24 @@ void ANaziZombieCharacter::EquipWeapon(AWeaponBase* NewWeapon)
 
 		if (WeaponArray.IsValidIndex(WeaponSlot))
 		{
-			WeaponArray[WeaponSlot]->SetLifeSpan(0.1f);
-			WeaponArray[WeaponSlot] = NewWeapon;
+			if (WeaponArray[WeaponSlot] != nullptr)
+			{
+				WeaponArray[WeaponSlot]->SetLifeSpan(0.1f);
+			}				
+			
+			WeaponArray[WeaponSlot] = NewWeapon;			
 		}
-		else
+		/*else
 		{
 			WeaponArray.Add(NewWeapon);
 			OnEquipNewWeapon.Broadcast(NewWeapon);
-		}
+		}*/
 
 		if (!CurrentWeapon->GetIsReloading())
 		{
 			CurrentWeapon = NewWeapon;
 			OnRep_AttachWeapon();
-			WeaponIndex = (WeaponIndex + 1) % WeaponArray.Num();
+			WeaponIndex = WeaponSlot;
 		}		
 	}
 	else
@@ -270,7 +274,7 @@ AWeaponBase* ANaziZombieCharacter::CheckWeaponClass(TSubclassOf<AWeaponBase> Wea
 
 	for (auto It : WeaponArray)
 	{
-		if (It->GetClass() == Weapon)
+		if (It && It->GetClass() == Weapon)
 			return It;
 	}
 
@@ -556,18 +560,17 @@ void ANaziZombieCharacter::Client_OnReload_Implementation()
 bool ANaziZombieCharacter::NeedAmmo(TEnumAsByte<EWeaponID> AmmoType) const
 {
 	if (bIsRage) return false;
-
+		
 	switch (AmmoType)
 	{
 	case EWeaponID::Colt1911:
-		return !WeaponArray[0]->IsFullAmmo();
+		return WeaponArray[0] && !WeaponArray[0]->IsFullAmmo();
 
-	case EWeaponID::M1Carbine:
-		if (!WeaponArray.IsValidIndex(1)) return false;
-		return !WeaponArray[1]->IsFullAmmo();
+	case EWeaponID::M1Carbine:		
+		return WeaponArray[1] && !WeaponArray[1]->IsFullAmmo();
 
 	case EWeaponID::STG44:
-		return false;
+		return WeaponArray[2] && !WeaponArray[2]->IsFullAmmo();
 
 	default:
 		return false;
@@ -624,8 +627,25 @@ void ANaziZombieCharacter::RecoveryAmmo(TEnumAsByte<EWeaponID> AmmoType, int32 A
 		return;
 
 	case EWeaponID::STG44:
-		return;
 
+		if (CurrentWeapon == WeaponArray[2])
+		{
+			Client_OnReload();
+		}
+
+		if (IsLocallyControlled())
+		{
+			WeaponArray[2]->RecoveryAmmo(AmmoAmount);
+		}
+		else
+		{
+			FTimerHandle TimerHandle;
+			FTimerDelegate TimerDelegate = FTimerDelegate::CreateUObject(this, &ANaziZombieCharacter::UpdateAmmoAfterPickup_Client,
+				WeaponArray[2], AmmoAmount);
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 0.5f, false);
+		}
+
+		return;
 	default:
 		return;
 	}
@@ -672,5 +692,12 @@ void ANaziZombieCharacter::DiseaseFinished()
 		bIsInfected = false;
 		OnRep_InfectedStateChanged();
 	}	
+}
+
+
+
+UClass* ANaziZombieCharacter::GetInteractableCompClass() const
+{
+	return InteractableBox->GetClass();
 }
 

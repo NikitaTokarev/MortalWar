@@ -76,6 +76,10 @@ void ACharacterBase::BeginPlay()
 			CurrentWeapon->WeaponIsNowInHand(true);
 			OnRep_AttachWeapon();
 		}
+
+		WeaponArray.Add(nullptr);
+		WeaponArray.Add(nullptr);
+
 		/*if (AWeaponBase* Weapon = GetWorld()->SpawnActor<AWeaponBase>(SecondWeaponClass, SpawnParams))
 		{
 			Weapon->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocket"));
@@ -181,11 +185,11 @@ void ACharacterBase::OnRep_AttachWeapon()
 	{
 		CurrentWeapon->WeaponIsNowInHand(true);
 
-		if (WeaponArray.Num() > 1)
+		/*if (WeaponArray.Num() > 1)
 		{
 			AWeaponBase* HiddenWeapon = CurrentWeapon == WeaponArray[0] ? WeaponArray[1] : WeaponArray[0];
 			HiddenWeapon->WeaponIsNowInHand(false);
-		}
+		}*/
 
 		
 		if (IsLocallyControlled())
@@ -326,7 +330,7 @@ void ACharacterBase::SwitchNextWeapon(bool bIsNext)
 
 	if (CurrentWeapon && bCanChangeWeapon)
 	{
-		int Difference = bIsNext ? 1 : -1;
+		//int Difference = bIsNext ? 1 : -1;
 
 		bCanChangeWeapon = false;
 		FTimerHandle EnableChanging;
@@ -335,7 +339,33 @@ void ACharacterBase::SwitchNextWeapon(bool bIsNext)
 
 		if (CurrentWeapon->GetCanFire() && !CurrentWeapon->GetIsReloading())
 		{
-			if (WeaponArray.IsValidIndex(WeaponIndex + Difference))
+			int8 Difference = (WeaponIndex + 1) % WeaponArray.Num();
+			if (AWeaponBase* NextWeapon = WeaponArray[Difference])
+			{
+				WeaponIndex = Difference;
+				CurrentWeapon->WeaponIsNowInHand(false);
+				CurrentWeapon = NextWeapon;
+				CurrentWeapon->WeaponIsNowInHand(true);
+
+				Server_SwitchWeapon(CurrentWeapon);
+			}
+			else
+			{
+				Difference = (WeaponIndex + 2) % WeaponArray.Num();
+				NextWeapon = WeaponArray[Difference];
+
+				if (NextWeapon && NextWeapon != CurrentWeapon)
+				{
+					WeaponIndex = Difference;
+					CurrentWeapon->WeaponIsNowInHand(false);
+					CurrentWeapon = NextWeapon;
+					CurrentWeapon->WeaponIsNowInHand(true);
+
+					Server_SwitchWeapon(CurrentWeapon);
+				}
+			}
+
+			/*if (WeaponArray.IsValidIndex(WeaponIndex + Difference) && WeaponArray[WeaponIndex + Difference] != nullptr)
 			{
 				if (AWeaponBase* NextWeapon = WeaponArray[WeaponIndex + Difference])
 				{
@@ -343,19 +373,49 @@ void ACharacterBase::SwitchNextWeapon(bool bIsNext)
 					CurrentWeapon->WeaponIsNowInHand(false);
 					CurrentWeapon = NextWeapon;
 					CurrentWeapon->WeaponIsNowInHand(true);
+
+					Server_SwitchWeapon(CurrentWeapon);
 				}
 			}
-			else
+			else if(WeaponArray.IsValidIndex(WeaponIndex - Difference) && WeaponArray[WeaponIndex - Difference] != nullptr)
 			{
 				WeaponIndex = bIsNext ? 0 : WeaponArray.Num() - 1;
 				CurrentWeapon->WeaponIsNowInHand(false);
 				CurrentWeapon = WeaponArray[WeaponIndex];
 				CurrentWeapon->WeaponIsNowInHand(true);
+
+				Server_SwitchWeapon(CurrentWeapon);
+			}*/
+					
+		}		
+	}
+}
+
+
+
+void ACharacterBase::SwitchNextWeapon(int8 WeaponSlot)
+{
+	if (CurrentWeapon && bCanChangeWeapon)
+	{
+		bCanChangeWeapon = false;
+		FTimerHandle EnableChanging;
+		GetWorldTimerManager().SetTimer(EnableChanging, this, &ACharacterBase::EnableChangeWeapon, bIsRage ? 0.02f : 0.25f, false);
+
+		for (int i = 0; i < WeaponArray.Num(); ++i)
+		{
+			if (WeaponArray[i] && WeaponArray[i]->GetWeaponSlot() == WeaponSlot)
+			{
+				WeaponIndex = i;
+				CurrentWeapon->WeaponIsNowInHand(false);
+				CurrentWeapon = WeaponArray[WeaponIndex];
+				CurrentWeapon->WeaponIsNowInHand(true);
+
+				Server_SwitchWeapon(CurrentWeapon);
+				return;
 			}
 		}
-		
-		Server_SwitchWeapon(CurrentWeapon);
 	}
+	
 }
 
 

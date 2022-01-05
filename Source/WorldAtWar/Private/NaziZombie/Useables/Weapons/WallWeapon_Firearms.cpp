@@ -35,7 +35,7 @@ void AWallWeapon_Firearms::TakeWeapon(ANaziZombieCharacter* Player)
 		ExistingWeapon->RecoveryAmmo(0, true);
 		if (ExistingWeapon != Player->GetCurrentWeapon() && !Player->GetCurrentWeapon()->GetIsReloading())
 		{
-			Player->SwitchNextWeapon(true);
+			Player->SwitchNextWeapon(ExistingWeapon->GetWeaponSlot());
 		}
 	}
 	else
