@@ -9,6 +9,9 @@
 
 class ANaziZombieCharacter;
 class USoundWave;
+class UCapsuleComponent;
+class USkeletalMeshComponent;
+class UFloatingPawnMovement;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDeath);
 
@@ -23,6 +26,15 @@ public:
 	AZombieBase();
 
 protected:
+
+	/*UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UCapsuleComponent* CapsuleCollision;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	USkeletalMeshComponent* MeshComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UFloatingPawnMovement* MovementComponent;*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float MaxHealth = 150.0f;

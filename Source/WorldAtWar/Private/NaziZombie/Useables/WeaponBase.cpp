@@ -75,8 +75,8 @@ void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 
 TArray<FHitResult> AWeaponBase::PerformLineTrace(ANaziZombieCharacter* ShootingPlayer)
 {
-	FVector Start = ShootingPlayer->GetFirstPersonCameraComponent()->GetComponentLocation(); //WeaponMesh->GetSocketLocation(FName("muzzleSocket"));
-	FVector Rot = ShootingPlayer->GetFirstPersonCameraComponent()->GetForwardVector(); //WeaponMesh->GetSocketRotation(FName("muzzleSocket")).Vector();
+	FVector Rot = ShootingPlayer->GetFirstPersonCameraComponent()->GetForwardVector();
+	FVector Start = ShootingPlayer->GetFirstPersonCameraComponent()->GetComponentLocation() + Rot * 25.0f; 																							
 	FVector End = Start + Rot * 5000.0f;
 
 	TArray<FHitResult> HitResults;
@@ -89,7 +89,7 @@ TArray<FHitResult> AWeaponBase::PerformLineTrace(ANaziZombieCharacter* ShootingP
 
 
 	GetWorld()->LineTraceMultiByChannel(OUT HitResults, Start, End, ECollisionChannel::ECC_GameTraceChannel2, CollisionParams, CollisionResponse);
-	//DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 8.0f, 0, 3.0f);
+	//DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 8.0f, 0, 5.0f);
 
 	return HitResults;
 }
@@ -266,7 +266,7 @@ bool AWeaponBase::Fire(ANaziZombieCharacter* ShootingPlayer)
 						}						
 						break;
 					}
-					//UE_LOG(LogTemp, Warning, TEXT("Actor Name: %s"), *HitActor->GetName());
+					UE_LOG(LogTemp, Warning, TEXT("Actor Name: %s"), *HitActor->GetName());
 				}
 			}
 		}

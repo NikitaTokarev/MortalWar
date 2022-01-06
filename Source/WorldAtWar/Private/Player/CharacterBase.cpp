@@ -189,7 +189,7 @@ bool ACharacterBase::Client_SwitchWeapon_Validate(AWeaponBase* NewWeapon)
 
 void ACharacterBase::Client_SwitchWeapon_Implementation(AWeaponBase* NewWeapon)
 {
-	OnWeaponChanged.Broadcast();
+	OnWeaponChanged.Broadcast(NewWeapon);
 }
 
 
@@ -215,7 +215,7 @@ void ACharacterBase::OnRep_AttachWeapon()
 		if (IsLocallyControlled())
 		{
 			CurrentWeapon->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocket"));
-			OnWeaponChanged.Broadcast();
+			OnWeaponChanged.Broadcast(CurrentWeapon);
 		}
 		else
 		{

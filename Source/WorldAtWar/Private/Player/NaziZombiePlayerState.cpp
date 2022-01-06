@@ -41,7 +41,7 @@ void ANaziZombiePlayerState::IncrementPoints(int16 Value)
 	if(HasAuthority()) 
 		OnRep_PointsChanged();
 	OnPointsChanged.Broadcast(Points);
-	UE_LOG(LogTemp, Warning, TEXT("POINTS: %d"), Points);
+	//UE_LOG(LogTemp, Warning, TEXT("POINTS: %d"), Points);
 }
 
 

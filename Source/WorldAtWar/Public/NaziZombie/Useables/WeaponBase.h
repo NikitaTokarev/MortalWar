@@ -212,6 +212,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool GetCanFire() const { return bCanFire; }
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool GetIsReloading() const { return bIsReloading; }
 
 	float GetRageForKilling() const { return WeaponDamage.RageForKilling; }

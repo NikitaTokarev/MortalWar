@@ -16,7 +16,7 @@ class USoundBase;
 class AWeaponBase;
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWeaponChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWeaponChanged, AWeaponBase*, NewWeapon);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FIsAimingChanged, bool, NewAiming);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInfectedState, bool, bNewState);
 

@@ -208,7 +208,7 @@ void ANaziZombieCharacter::OnRep_KnifeAttached()
 
 void ANaziZombieCharacter::EquipWeapon(AWeaponBase* NewWeapon)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%d"), NewWeapon->GetWeaponSlot());
+	//UE_LOG(LogTemp, Warning, TEXT("%d"), NewWeapon->GetWeaponSlot());
 
 	if (HasAuthority())
 	{
@@ -240,6 +240,8 @@ void ANaziZombieCharacter::EquipWeapon(AWeaponBase* NewWeapon)
 	{
 		Server_EquipWeapon(NewWeapon);
 	}	
+
+	OnEquipNewWeapon.Broadcast(NewWeapon);
 }
 
 

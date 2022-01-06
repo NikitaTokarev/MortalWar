@@ -58,8 +58,8 @@ void ANaziZombieGameMode::BeginPlay()
 
 	}
 
-	const FString MapName = GetWorld()->GetFName().ToString();
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *MapName);	
+	//const FString MapName = GetWorld()->GetFName().ToString();
+	//UE_LOG(LogTemp, Warning, TEXT("%s"), *MapName);	
 
 
 	GetWorld()->GetTimerManager().SetTimer(TZombieSpawnHandle, this, &ANaziZombieGameMode::SpawnZombie, 1.0f, true);
@@ -188,7 +188,7 @@ void ANaziZombieGameMode::TimesUp()
 
 void ANaziZombieGameMode::NewZoneActive(uint8 ZoneNumber)
 {
-	UE_LOG(LogTemp, Warning, TEXT("SETTING ACTIVE ZONE: %d"), ZoneNumber);
+	//UE_LOG(LogTemp, Warning, TEXT("SETTING ACTIVE ZONE: %d"), ZoneNumber);
 
 
 	for (int16 x = ZombieSpawnPoints.Num() - 1; x >= 0; --x)
@@ -251,7 +251,7 @@ void ANaziZombieGameMode::SetSpawnPoints()
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Spawn Point Count: %d"), PlayerSpawnPoints.Num());
+	//UE_LOG(LogTemp, Warning, TEXT("Spawn Point Count: %d"), PlayerSpawnPoints.Num());
 	bHasLoadedSpawnPoints = true;
 }
 
@@ -274,7 +274,7 @@ void ANaziZombieGameMode::PostLogin(APlayerController* NewPlayer)
 			FVector SpawnLocation = SpawnPoint->GetActorLocation();
 			if (APawn* Pawn = GetWorld()->SpawnActor<APawn>(PlayerClass, SpawnLocation, SpawnPoint->GetActorRotation()))
 			{
-				UE_LOG(LogTemp, Warning, TEXT("SPAWNED PAWN TO POSSESS"));
+				//UE_LOG(LogTemp, Warning, TEXT("SPAWNED PAWN TO POSSESS"));
 				NewPlayer->Possess(Pawn);
 				SpawnPoint->SetUsed(true);
 				return;

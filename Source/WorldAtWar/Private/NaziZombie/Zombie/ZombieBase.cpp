@@ -12,6 +12,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/FloatingPawnMovement.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundWave.h"
 
@@ -24,6 +25,13 @@ AZombieBase::AZombieBase()
 	CleanupDelay = 5.0f;
 	Health = 150.0f;
 
+	/*CapsuleCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleCollision"));
+	SetRootComponent(CapsuleCollision);
+
+	MeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComponent"));
+	MeshComponent->SetupAttachment(CapsuleCollision);
+
+	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));*/
 }
 
 
@@ -155,7 +163,7 @@ void AZombieBase::SpawnPickupAfterDeath(TSubclassOf<class APickupBase> PickupCla
 
 uint8 AZombieBase::GetHitPart(const FString& BoneName)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Hit Part: %s"), *BoneName);
+	UE_LOG(LogTemp, Warning, TEXT("Hit Part: %s"), *BoneName);
 
 	// limb hit
 	if (BoneName.Contains(FString("Leg")) || BoneName.Contains(FString("Arm")) || BoneName.Contains(FString("Thigh")) || BoneName.Contains(FString("Calf")) || BoneName.Contains(FString("Foot")))
