@@ -36,6 +36,9 @@ protected:
 	ANaziZombieGameState* ZombieGameState;
 
 	UPROPERTY(EditDefaultsOnly)
+	TArray<TSubclassOf<class AWeaponBase>> AdditionalWeapons;
+
+	UPROPERTY(EditDefaultsOnly)
 	uint8 MaxZombiesOnMap = 30;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -82,4 +85,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddNewZombieSpawnPoints(TArray<ANaziZombieZombieSpawnPoint*> NewSpawnPoints);
+
+	TArray<TSubclassOf<class AWeaponBase>> GetAdditionalWeapons() const { return AdditionalWeapons; }
 };

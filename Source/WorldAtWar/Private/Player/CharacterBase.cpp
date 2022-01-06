@@ -3,6 +3,7 @@
 
 #include "Player/CharacterBase.h"
 #include "NaziZombie/Useables/WeaponBase.h"
+#include "NaziZombie/Game/NaziZombieGameMode.h"
 
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
@@ -79,7 +80,26 @@ void ACharacterBase::BeginPlay()
 
 		WeaponArray.Add(nullptr);
 		WeaponArray.Add(nullptr);
+		
 
+		if (ANaziZombieGameMode* GM = GetWorld()->GetAuthGameMode<ANaziZombieGameMode>())
+		{
+			auto AdditionalWeaponClasses = GM->GetAdditionalWeapons();
+			if (AdditionalWeaponClasses.Num() > 0)
+			{
+				for (auto& WeapClass : AdditionalWeaponClasses)
+				{
+					AWeaponBase* Weapon = GetWorld()->SpawnActor<AWeaponBase>(WeapClass, SpawnParams);
+					if (Weapon && WeaponArray.IsValidIndex(Weapon->GetWeaponSlot()))
+					{
+						WeaponArray[Weapon->GetWeaponSlot()] = Weapon;
+					}
+				}
+			}
+			
+		}	
+			
+		
 		/*if (AWeaponBase* Weapon = GetWorld()->SpawnActor<AWeaponBase>(SecondWeaponClass, SpawnParams))
 		{
 			Weapon->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocket"));

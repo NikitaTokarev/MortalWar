@@ -7,7 +7,7 @@
 
 #include "Components/SkeletalMeshComponent.h"
 #include "Camera/CameraComponent.h"
-#include "DrawDebugHelpers.h"
+//#include "DrawDebugHelpers.h"
 #include "Animation/AnimInstance.h"
 #include "Net/UnrealNetwork.h"
 
@@ -313,7 +313,7 @@ void AWeaponBase::CalculateRicochet(AZombieBase* TargetEnemy, const FVector HitL
 
 
 	GetWorld()->LineTraceMultiByChannel(OUT HitResults, HitLocation, End, ECollisionChannel::ECC_GameTraceChannel2, CollisionParams, CollisionResponse);
-	DrawDebugLine(GetWorld(), HitLocation, End, FColor::Red, false, 2.0f, 0, 3.0f);
+	//DrawDebugLine(GetWorld(), HitLocation, End, FColor::Red, false, 2.0f, 0, 3.0f);
 
 	if (HitResults.Num() > 0)
 	{

@@ -420,9 +420,12 @@ void ANaziZombieCharacter::Client_ChangeRage_Implementation(float NewRage)
 
 void ANaziZombieCharacter::EnableRageMode()
 {
-	for (auto& It : WeaponArray)
+	for (auto& Weapon : WeaponArray)
 	{
-		It->Client_CallAmmoChangedDelegate(999, 999);
+		if (Weapon)
+		{
+			Weapon->Client_CallAmmoChangedDelegate(999, 999);
+		}		
 	}
 	Server_EnableRageMode();
 }
@@ -440,9 +443,12 @@ void ANaziZombieCharacter::Server_EnableRageMode_Implementation()
 {
 	bIsRage = true;
 
-	for (auto& It : WeaponArray)
+	for (auto& Weapon : WeaponArray)
 	{
-		It->ActivateRageMode();
+		if (Weapon)
+		{
+			Weapon->ActivateRageMode();
+		}			
 	}
 
 	Knife->ActivateRageMode();
@@ -458,9 +464,12 @@ void ANaziZombieCharacter::DisableRageMode()
 {
 	bIsRage = false;
 
-	for (auto& It : WeaponArray)
+	for (auto& Weapon : WeaponArray)
 	{
-		It->DeactivateRageMode();
+		if (Weapon)
+		{
+			Weapon->DeactivateRageMode();
+		}		
 	}
 	Knife->DeactivateRageMode();
 
@@ -490,9 +499,12 @@ void ANaziZombieCharacter::Client_DisableRageMode_Implementation()
 		OnRageFinished.Broadcast();
 	}
 
-	for (auto& It : WeaponArray)
+	for (auto& Weapon : WeaponArray)
 	{
-		It->Client_CallAmmoChangedDelegate(It->GetCurrentAmmo()[0], It->GetCurrentAmmo()[1]);
+		if (Weapon)
+		{
+			Weapon->Client_CallAmmoChangedDelegate(Weapon->GetCurrentAmmo()[0], Weapon->GetCurrentAmmo()[1]);
+		}		
 	}
 }
 
