@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.YourCompany.WorldAtWar;
+package com.WorldAtWar;
 
 import com.google.android.vending.expansion.downloader.DownloaderClientMarshaller;
 

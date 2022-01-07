@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.YourCompany.WorldAtWar;
+package com.WorldAtWar;
 
 import com.google.android.vending.expansion.downloader.impl.DownloaderService;
 
@@ -61,6 +61,6 @@ public class OBBDownloaderService extends DownloaderService {
      */
     @Override
     public String getAlarmReceiverClassName() {
-        return com.YourCompany.WorldAtWar.AlarmReceiver.class.getName();
+        return com.WorldAtWar.AlarmReceiver.class.getName();
     }
 }
