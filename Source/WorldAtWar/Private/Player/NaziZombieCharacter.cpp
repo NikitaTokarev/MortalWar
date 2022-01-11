@@ -130,7 +130,7 @@ void ANaziZombieCharacter::SetInteractionObject(AActor* OtherActor)
 		Interactable = nullptr;
 		OnInteractChanged.Broadcast(nullptr);
 	}
-
+	
 }
 
 
@@ -290,6 +290,8 @@ void ANaziZombieCharacter::Interact()
 {
 	if (Interactable && !Interactable->GetIsUsed() && !bIsDead)
 	{
+		OnInteracted.Broadcast(Interactable);
+
 		if (HasAuthority())
 		{
 			Interactable->Use(this);
@@ -297,9 +299,7 @@ void ANaziZombieCharacter::Interact()
 		else
 		{
 			Server_Interact(Interactable);
-		}
-
-		OnInteracted.Broadcast(Interactable);
+		}		
 	}
 }
 
@@ -710,8 +710,29 @@ void ANaziZombieCharacter::DiseaseFinished()
 
 
 
+void ANaziZombieCharacter::ClearInteractable()
+{
+	if (HasAuthority() && Interactable)
+	{
+		SetInteractionObject(nullptr);
+	}
+}
+
+
 UClass* ANaziZombieCharacter::GetInteractableCompClass() const
 {
 	return InteractableBox->GetClass();
+}
+
+
+void ANaziZombieCharacter::IncrementPoints(int32 Value)
+{
+	if (HasAuthority())
+	{
+		if (auto State = GetPlayerState<ANaziZombiePlayerState>())
+		{
+			State->IncrementPoints(Value);
+		}
+	}
 }
 

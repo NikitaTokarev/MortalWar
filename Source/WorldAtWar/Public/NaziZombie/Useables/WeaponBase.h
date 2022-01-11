@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "NaziZombie/Useables/Weapons/AbstractWeapon.h"
 #include "WorldAtWar/Public/WWCoreTypes.h"
 #include "WeaponBase.generated.h"
 
@@ -74,7 +74,7 @@ struct FWeaponDamage
 
 
 UCLASS()
-class WORLDATWAR_API AWeaponBase : public AActor
+class WORLDATWAR_API AWeaponBase : public AAbstractWeapon
 {
 	GENERATED_BODY()
 	

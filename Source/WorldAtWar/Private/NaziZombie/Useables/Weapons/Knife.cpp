@@ -25,6 +25,8 @@ AKnife::AKnife()
 
 	bCanUse = true;
 
+	bIsFireArms = false;
+
 	BaseDamage = 60.0f;
 	RageForKilling = 4.5f;
 	DamageMultiplierInRage = 2.45f;

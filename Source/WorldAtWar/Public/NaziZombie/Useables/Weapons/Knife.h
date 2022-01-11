@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "NaziZombie/Useables/Weapons/AbstractWeapon.h"
 #include "Knife.generated.h"
 
 
 
 UCLASS()
-class WORLDATWAR_API AKnife : public AActor
+class WORLDATWAR_API AKnife : public AAbstractWeapon
 {
 	GENERATED_BODY()
 	

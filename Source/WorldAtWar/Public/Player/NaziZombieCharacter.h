@@ -216,5 +216,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DiseaseFinished();
 
+	void ClearInteractable();
 	UClass* GetInteractableCompClass() const;
+
+	void IncrementPoints(int32 Value);
 };

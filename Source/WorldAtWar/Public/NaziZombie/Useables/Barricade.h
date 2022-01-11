@@ -7,7 +7,7 @@
 #include "Barricade.generated.h"
 
 class USkeletalMeshComponent;
-class UStaticMeshComponent;
+class UBoxComponent;
 class ANaziZombieCharacter;
 class UAnimationAsset;
 
@@ -24,10 +24,10 @@ public:
 protected:
 
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
-	USkeletalMeshComponent* MeshComp;
+	UBoxComponent* CollisionComp;
 
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
-	UStaticMeshComponent* CollisionMesh;
+	USkeletalMeshComponent* MeshComp;
 
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
 	UAnimationAsset* OpenAnimation;

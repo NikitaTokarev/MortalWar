@@ -7,15 +7,17 @@
 #include "Player/NaziZombiePlayerState.h"
 
 #include "Components/SkeletalMeshComponent.h"
-#include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
 #include "Net/UnrealNetwork.h"
 
 ABarricade::ABarricade()
 {
-	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMeshComponent");
-	RootComponent = MeshComp;
+	CollisionComp = CreateDefaultSubobject<UBoxComponent>("CollisionComponent");
+	SetRootComponent(CollisionComp);
 
-	CollisionMesh = CreateDefaultSubobject<UStaticMeshComponent>("StaticMeshComponent");
+	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMeshComponent");
+	MeshComp->SetupAttachment(CollisionComp);
+	
 	//CollisionMesh->SetupAttachment(MeshComp);
 
 	ObjectName = FText::FromString("Door");
@@ -48,7 +50,7 @@ void ABarricade::BeginPlay()
 void ABarricade::OnRep_ObjectUsed()
 {
 	//SetActorEnableCollision(false);
-	CollisionMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	CollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	if (!OpenAnimation) return;
 	MeshComp->PlayAnimation(OpenAnimation, false);

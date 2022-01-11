@@ -24,6 +24,8 @@ AWeaponBase::AWeaponBase()
 	
 	WeaponMesh->CastShadow = false;
 
+	bIsFireArms = true;
+
 	WeaponName = "Weapon";	
 	WeaponMaxAmmo = 50;
 	MagazineMaxAmmo = 10;
