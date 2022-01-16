@@ -37,7 +37,7 @@ void ANaziZombiePlayerState::OnRep_PointsChanged()
 
 void ANaziZombiePlayerState::IncrementPoints(int16 Value)
 {
-	Points += Value;
+	Points = FMath::Max(Points + Value, 0);
 	if(HasAuthority()) 
 		OnRep_PointsChanged();
 	OnPointsChanged.Broadcast(Points);

@@ -19,5 +19,6 @@ protected:
 	bool bIsFireArms;
 
 public:
+	UFUNCTION(BlueprintCallable)
 	bool GetIsFireArms() const { return bIsFireArms; }
 };

@@ -182,8 +182,12 @@ protected:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
+	UFUNCTION(BlueprintCallable)
 	void EquipWeapon(AWeaponBase* NewWeapon);
+
+	UFUNCTION(BlueprintCallable)
 	void EquipKnife(AKnife* NewKnife);
+
 	uint32 GetPoints() const;
 
 	UFUNCTION(BlueprintCallable)
@@ -219,5 +223,6 @@ public:
 	void ClearInteractable();
 	UClass* GetInteractableCompClass() const;
 
+	UFUNCTION(BlueprintCallable)
 	void IncrementPoints(int32 Value);
 };
