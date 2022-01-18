@@ -4,6 +4,7 @@
 #include "NaziZombie/Useables/Weapons/Knife.h"
 #include "Player/NaziZombieCharacter.h"
 #include "NaziZombie/Zombie/ZombieBase.h"
+#include "NaziZombie/Game/NaziZombieGameState.h"
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
@@ -50,9 +51,7 @@ void AKnife::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//SetReplicates(true);
-
-	//KnifeMesh->SetHiddenInGame(true);
+	GameState = GetWorld()->GetGameState<ANaziZombieGameState>();
 
 	SetActorHiddenInGame(true);
 }
@@ -172,7 +171,18 @@ void AKnife::ApplyDamage(TArray<FHitResult>& HitResults)
 				{
 					if (ANaziZombieCharacter* Player = Cast<ANaziZombieCharacter>(GetOwner()))
 					{
-						Zombie->Hit_Knife(Player, BaseDamage, RageForKilling);
+						float Damage = BaseDamage;
+						if (GameState)
+						{
+							Damage += (GameState->GetRoundNumber() * BaseDamage) * 0.12f;
+						}
+						else
+						{
+							Damage += Damage * 0.5f;
+						}
+
+						Zombie->Hit_Knife(Player, Damage, RageForKilling);
+						//UE_LOG(LogTemp, Warning, TEXT("%f"), Damage);
 					}
 
 				}

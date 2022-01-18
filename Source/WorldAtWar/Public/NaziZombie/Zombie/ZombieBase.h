@@ -120,7 +120,7 @@ public:
 	float GetDamage() const { return Damage; }
 
 	UFUNCTION(BlueprintCallable)
-	void ActivateBuff(float ActiveTime, bool bIsEternal = false);
+	void ActivateBuff(float ActiveTime, bool bIsEternal = false, float HealthPercent = 0.5f);
 
 	UFUNCTION(BlueprintCallable)
 	void DisableDrop() { bSpawnPickupAfterDeath = false; }

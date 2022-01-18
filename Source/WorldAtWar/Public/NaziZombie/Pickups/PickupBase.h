@@ -57,6 +57,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ToggleRespawn(bool bNewFlag) { bIsRespawnables = bNewFlag; }
 
+	UFUNCTION(BlueprintCallable)
+	virtual void SetRecoverableValue(float NewValue) {}
+
 private:	
 	FTimerHandle RespawnTimerHandle;	
 

@@ -20,4 +20,7 @@ protected:
 
 	virtual bool CanTakePickup(class ANaziZombieCharacter* Player) override;
 	virtual void GivePickupTo(class ANaziZombieCharacter* Player) override;
+
+public:
+	virtual void SetRecoverableValue(float NewValue) override { RageAmount = NewValue; };
 };

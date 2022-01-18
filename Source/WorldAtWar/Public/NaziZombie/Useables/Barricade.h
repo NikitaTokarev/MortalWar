@@ -23,7 +23,7 @@ public:
 
 protected:
 
-	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Nazi Zombie Settings")
 	UBoxComponent* CollisionComp;
 
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")

@@ -49,6 +49,8 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void AddDamage(TArray<FHitResult> HitResults);
 
+	class ANaziZombieGameState* GameState;
+
 	bool bCanUse;	
 
 	UPROPERTY(EditDefaultsOnly, Category = "Nazi Zombie Settings")

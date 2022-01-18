@@ -63,6 +63,17 @@ void AWeaponBase::BeginPlay()
 
 	WeaponMesh->HideBoneByName(FName("Magazine2"), EPhysBodyOp::PBO_None);
 
+	if (HasAuthority())
+	{
+		if (ANaziZombieCharacter* Player = Cast<ANaziZombieCharacter>(GetOwner()))
+		{
+			if (Player->IsRageMode())
+			{
+				ActivateRageMode();
+			}			
+		}
+	}
+
 }
 
 void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

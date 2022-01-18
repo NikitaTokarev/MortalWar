@@ -35,8 +35,7 @@ ANaziZombieCharacter::ANaziZombieCharacter()
 
 void ANaziZombieCharacter::BeginPlay()
 {
-	Super::BeginPlay();
-
+	Super::BeginPlay();	
 
 	if (HasAuthority())
 	{

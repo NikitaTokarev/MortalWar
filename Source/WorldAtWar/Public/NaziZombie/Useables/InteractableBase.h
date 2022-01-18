@@ -8,6 +8,8 @@
 
 class ANaziZombieCharacter;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnObjectUsed);
+
 UCLASS()
 class WORLDATWAR_API AInteractableBase : public AActor
 {
@@ -28,6 +30,12 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
 	uint16 Cost;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Nazi Zombie Settings")
+	bool bSpecialColor = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Nazi Zombie Settings")
+	FLinearColor SpecialColor = FLinearColor::Black;
+
 	UPROPERTY(ReplicatedUsing = OnRep_ObjectUsed)
 	bool bIsUsed;
 
@@ -40,6 +48,9 @@ protected:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeTimeProps) const override;
 
 public:
+	UPROPERTY(BlueprintAssignable)
+	FOnObjectUsed OnObjectUsed;
+
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FText GetUIMessage() const { return UIMessage; }
 
@@ -52,4 +63,9 @@ public:
 	virtual void Use(ANaziZombieCharacter* Player);
 	virtual bool GetIsUsed() const { return bIsUsed; }	
 		
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool HasSpecialColor() const { return bSpecialColor; }
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FLinearColor GetSpecialColor() const { return SpecialColor; }
 };

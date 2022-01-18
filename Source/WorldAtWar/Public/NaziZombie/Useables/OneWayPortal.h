@@ -6,7 +6,7 @@
 #include "NaziZombie/Useables/InteractableBase.h"
 #include "OneWayPortal.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPortalUsed);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPortalUsed);
 
 UCLASS()
 class WORLDATWAR_API AOneWayPortal : public AInteractableBase
@@ -17,6 +17,9 @@ public:
 	AOneWayPortal();
 
 protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Nazi Zombie Settings")
+	USceneComponent* RootComp;
+
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
 	UStaticMeshComponent* MeshComp;
 
@@ -26,8 +29,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
 	FRotator DestinationRotation;
 
-	UPROPERTY(BlueprintAssignable)
-	FOnPortalUsed OnPortalUsed;
+	/*UPROPERTY(BlueprintAssignable)
+	FOnPortalUsed OnPortalUsed;*/
 	
 	virtual void BeginPlay() override;
 	virtual void Use(ANaziZombieCharacter* Player);

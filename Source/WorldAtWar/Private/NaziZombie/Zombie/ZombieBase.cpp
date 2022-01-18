@@ -306,24 +306,22 @@ void AZombieBase::Hit_Knife(ANaziZombieCharacter* Player, float BaseDamage, floa
 
 	if (ANaziZombiePlayerState* PState = Cast<ANaziZombiePlayerState>(Player->GetPlayerState()))
 	{
-		{
-			PState->IncrementPoints(15);
-			float AdditionalDamage = 0.0f;
+		{						
 
-			if (ANaziZombieGameState* GS = GetWorld()->GetGameState<ANaziZombieGameState>())
-			{
-				AdditionalDamage = GS->GetRoundNumber() * 12.5;
-			}			
-
-			if (Health - (BaseDamage + AdditionalDamage) <= 0)
+			if (Health - BaseDamage <= 0)
 			{
 				PState->AddKill();
 				PState->AddKnifing(this);
+				PState->IncrementPoints(50);
 
 				Player->IncrementRage(RageForKilling);
 			}
+			else
+			{
+				PState->IncrementPoints(15);
+			}
 
-			DecrementHealth(BaseDamage + AdditionalDamage);
+			DecrementHealth(BaseDamage);
 		}
 	}
 	else
@@ -358,9 +356,9 @@ USoundWave* AZombieBase::GetRandomSound(TArray<USoundWave*> Sounds) const
 
 
 
-void AZombieBase::ActivateBuff(float ActiveTime, bool bIsEternal)
+void AZombieBase::ActivateBuff(float ActiveTime, bool bIsEternal, float HealthPercent)
 {
-	Health *= 1.5;
+	Health += Health * HealthPercent;
 	Damage *= 1.33;
 
 	if (!bIsEternal && GetWorld())

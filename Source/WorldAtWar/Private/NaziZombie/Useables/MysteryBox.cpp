@@ -50,7 +50,9 @@ void AMysteryBox::Use(ANaziZombieCharacter* Player)
 				const FVector LootLocation = MysteryBoxMesh->GetSocketLocation("s_LootPlace");
 				const FRotator LootRotation = MysteryBoxMesh->GetSocketRotation("s_LootPlace");
 
-				if (ALootWeaponBase* LootWeapon =  GetWorld()->SpawnActor<ALootWeaponBase>(LootWeaponClass, LootLocation, LootRotation, SpawnParams))
+				LootWeapon = GetWorld()->SpawnActor<ALootWeaponBase>(LootWeaponClass, LootLocation, LootRotation, SpawnParams);
+
+				if (LootWeapon)
 				{
 					LootWeapon->InitializeLootWeapon(DroppedWeapons[FMath::RandRange(0, DroppedWeapons.Num()-1)]);
 					LootWeapon->OnLootPickup.AddUObject(this, &AMysteryBox::DestroyMysteryBox);
@@ -87,5 +89,11 @@ void AMysteryBox::DestroyMysteryBox()
 	}
 	StartDisappearing();
 
+	if (LootWeapon)
+	{
+		LootWeapon->SetLifeSpan(1.0f);
+	}
+
 	SetLifeSpan(2.0f);
+
 }

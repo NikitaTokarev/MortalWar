@@ -10,8 +10,11 @@
 
 AOneWayPortal::AOneWayPortal()
 {
+	RootComp = CreateDefaultSubobject<USceneComponent>("RootComp");
+	SetRootComponent(RootComp);
+
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("MeshComponent");
-	RootComponent = MeshComp;
+	MeshComp->SetupAttachment(RootComp);
 
 	ObjectName = FText::FromString("Portal");
 	Cost = 0;	
@@ -46,5 +49,6 @@ void AOneWayPortal::Use(ANaziZombieCharacter* Player)
 	Player->SetActorLocation(DestinationLocation);	
 	Player->GetController()->SetControlRotation(DestinationRotation);	
 
-	OnPortalUsed.Broadcast();
+	OnObjectUsed.Broadcast();
+	//OnPortalUsed.Broadcast();
 }

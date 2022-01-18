@@ -68,6 +68,8 @@ void ABarricade::Use(ANaziZombieCharacter* Player)
 			bIsUsed = true;
 			OnRep_ObjectUsed();
 
+			OnObjectUsed.Broadcast();
+
 			if (!GetWorld()) return;
 			if (ANaziZombieGameMode* GM = GetWorld()->GetAuthGameMode<ANaziZombieGameMode>())
 			{

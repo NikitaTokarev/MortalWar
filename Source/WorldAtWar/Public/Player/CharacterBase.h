@@ -177,5 +177,7 @@ public:
 
 	void SwitchNextWeapon(int8 WeaponSlot);
 
+	bool IsRageMode() const { return bIsRage; }
+
 	bool GetIsInfected() const { return bIsInfected; }
 };

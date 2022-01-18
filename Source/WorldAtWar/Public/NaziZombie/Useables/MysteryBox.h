@@ -18,7 +18,7 @@ public:
 	AMysteryBox();
 
 protected:	
-	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Nazi Zombie Settings")
 	class UBoxComponent* CollisionComponent;
 
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
@@ -39,6 +39,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
 	TArray<TSubclassOf<class AAbstractWeapon>> DroppedWeapons;
 
+	class ALootWeaponBase* LootWeapon = nullptr;
+
 	bool bIsClosing = false;
 
 	FTimerHandle DestroyTimerHandle;
@@ -53,4 +55,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void SetTimerToDestroy(float Time);
+
+	UFUNCTION(BlueprintCallable)
+	void SetDroppedItems(TArray<TSubclassOf<class AAbstractWeapon>> Drop) { DroppedWeapons = Drop; }
 };
