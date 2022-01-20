@@ -13,7 +13,7 @@ AWorldAtWarGameMode::AWorldAtWarGameMode()
 	//DefaultPawnClass = PlayerPawnClassFinder.Class;
 
 	// use our custom HUD class
-	HUDClass = AWorldAtWarHUD::StaticClass();
+	//HUDClass = AWorldAtWarHUD::StaticClass();
 }
 
 

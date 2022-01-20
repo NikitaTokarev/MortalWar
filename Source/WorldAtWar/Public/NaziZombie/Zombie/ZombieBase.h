@@ -14,6 +14,23 @@ class USkeletalMeshComponent;
 class UFloatingPawnMovement;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDeath);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTakeDamageRange, class ANaziZombieCharacter*, Player, float, DamageAmount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTakeDamageMelee, class ANaziZombieCharacter*, Player, float, DamageAmount);
+
+USTRUCT(BlueprintType)
+struct FResistanceData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float DamageFromFirearms = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float DamageFromMelee = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float DamageFromAuto = 1.0f;
+};
 
 
 UCLASS()
@@ -40,11 +57,13 @@ protected:
 	float MaxHealth = 150.0f;
 
 	UPROPERTY(Replicated, BlueprintReadOnly)
-	float Health;	
-
+	float Health;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Damage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FResistanceData Resistances;
 
 	UPROPERTY(EditDefaultsOnly)
 	float CleanupDelay;
@@ -59,10 +78,16 @@ protected:
 	void OnRep_Die();
 
 	UFUNCTION(BlueprintCallable)
-	void Resurrect();
+	void Resurrect();	
 
 	UPROPERTY(BlueprintAssignable)
 	FOnEnemyDeath OnEnemyDeath;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnTakeDamageRange OnTakeDamageRange;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnTakeDamageMelee OnTakeDamageMelee;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<UAnimMontage*> AttackMontages;
@@ -93,7 +118,7 @@ protected:
 	void Die();
 	void Die_Implementation();
 
-	int16 GetPointsForHit(uint8 HitPart, FWeaponDamage WeaponDamage, ANaziZombieCharacter* Player);
+	int16 GetPointsForHit(uint8 HitPart, FWeaponDamage WeaponDamage, ANaziZombieCharacter* Player, bool bIsAuto);
 	int32 GetAmmoForRound() const;
 
 
@@ -128,4 +153,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintPure)
 	FName GetChestBone() const;
 	FName GetChestBone_Implementation() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	float GetPercentHealth() const { return Health / MaxHealth; }
 };

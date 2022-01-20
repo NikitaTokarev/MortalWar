@@ -188,10 +188,9 @@ uint8 AZombieBase::GetHitPart(const FString& BoneName)
 }
 
 
-int16 AZombieBase::GetPointsForHit(uint8 HitPart, FWeaponDamage WeaponDamage, ANaziZombieCharacter* Player)
+int16 AZombieBase::GetPointsForHit(uint8 HitPart, FWeaponDamage WeaponDamage, ANaziZombieCharacter* Player, bool bIsAuto)
 {
-	TArray<int> DamageScoreKillScore;
-
+	TArray<int> DamageScoreKillScore;	
 
 	switch (HitPart)
 	{
@@ -222,6 +221,15 @@ int16 AZombieBase::GetPointsForHit(uint8 HitPart, FWeaponDamage WeaponDamage, AN
 		break;
 	}
 	}
+
+	DamageScoreKillScore[0] *= Resistances.DamageFromFirearms;
+
+	if (bIsAuto)
+	{
+		DamageScoreKillScore[0] *= Resistances.DamageFromAuto;
+	}
+
+	OnTakeDamageRange.Broadcast(Player, DamageScoreKillScore[0]);
 
 	UE_LOG(LogTemp, Error, TEXT("Damage: %d"), DamageScoreKillScore[0]);
 
@@ -281,7 +289,9 @@ void AZombieBase::Hit(ANaziZombieCharacter* Player, FHitResult HitResult)
 		if (HitResult.BoneName.IsNone()) return;
 		if (!Player->GetCurrentWeapon()) return;
 
-		FWeaponDamage WeaponDamage = Player->GetCurrentWeapon()->GetWeaponDamage();
+		AWeaponBase* CurrentWeapon = Player->GetCurrentWeapon();
+		FWeaponDamage WeaponDamage = CurrentWeapon->GetWeaponDamage();
+		bool bWeaponIsAuto = CurrentWeapon->GetIsFullAuto();
 
 		if (ANaziZombiePlayerState* PState = Cast<ANaziZombiePlayerState>(Player->GetPlayerState()))
 		{
@@ -291,7 +301,7 @@ void AZombieBase::Hit(ANaziZombieCharacter* Player, FHitResult HitResult)
 
 			if (uint8 HitPart = GetHitPart(BoneName))
 			{
-				if (uint8 PointsForHit = GetPointsForHit(HitPart, WeaponDamage, Player))
+				if (uint8 PointsForHit = GetPointsForHit(HitPart, WeaponDamage, Player, bWeaponIsAuto))
 				{
 					PState->IncrementPoints(PointsForHit);
 				}
@@ -304,30 +314,32 @@ void AZombieBase::Hit_Knife(ANaziZombieCharacter* Player, float BaseDamage, floa
 {
 	if (!Player || bIsDead) return;
 
+	float FinalDamage = BaseDamage * Resistances.DamageFromMelee;
+
 	if (ANaziZombiePlayerState* PState = Cast<ANaziZombiePlayerState>(Player->GetPlayerState()))
 	{
-		{						
+		if (Health - FinalDamage <= 0)
+		{
+			PState->AddKill();
+			PState->AddKnifing(this);
+			PState->IncrementPoints(50);
 
-			if (Health - BaseDamage <= 0)
-			{
-				PState->AddKill();
-				PState->AddKnifing(this);
-				PState->IncrementPoints(50);
-
-				Player->IncrementRage(RageForKilling);
-			}
-			else
-			{
-				PState->IncrementPoints(15);
-			}
-
-			DecrementHealth(BaseDamage);
+			Player->IncrementRage(RageForKilling);
 		}
+		else
+		{
+			PState->IncrementPoints(15);
+		}
+
+		DecrementHealth(FinalDamage);		
+		OnTakeDamageMelee.Broadcast(Player, FinalDamage);
 	}
 	else
 	{
-		DecrementHealth(BaseDamage);
+		DecrementHealth(FinalDamage);
 	}
+
+	UE_LOG(LogTemp, Error, TEXT("Damage_Knife: %f"), FinalDamage);
 }
 
 
@@ -358,7 +370,8 @@ USoundWave* AZombieBase::GetRandomSound(TArray<USoundWave*> Sounds) const
 
 void AZombieBase::ActivateBuff(float ActiveTime, bool bIsEternal, float HealthPercent)
 {
-	Health += Health * HealthPercent;
+	MaxHealth += MaxHealth * HealthPercent;
+	Health = MaxHealth;
 	Damage *= 1.33;
 
 	if (!bIsEternal && GetWorld())
@@ -376,6 +389,8 @@ void AZombieBase::ActivateBuff(float ActiveTime, bool bIsEternal, float HealthPe
 void AZombieBase::DeactivateBuff()
 {
 	Health /= 1.5;
+	MaxHealth /= 1.5;
+
 	Damage /= 1.33;
 }
 

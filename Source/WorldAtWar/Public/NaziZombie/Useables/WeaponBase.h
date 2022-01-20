@@ -233,6 +233,8 @@ public:
 
 	void ActivateRageMode();
 	void DeactivateRageMode();
+
+	bool GetIsFullAuto() const { return bIsFullAuto; }
 	
 	bool IsFullAmmo() const { return CurrentTotalAmmo == WeaponMaxAmmo && CurrentMagazineAmmo == MagazineMaxAmmo; }
 
