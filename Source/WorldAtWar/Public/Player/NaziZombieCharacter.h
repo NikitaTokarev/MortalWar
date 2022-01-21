@@ -206,6 +206,8 @@ public:
 	
 	bool IsFullHealth() const { return Health == MaxHealth; }
 	bool IsFullRage() const { return Rage == MaxRage; }
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool NeedAmmo(TEnumAsByte<EWeaponID> AmmoType) const;
 
 	UFUNCTION(BlueprintCallable)

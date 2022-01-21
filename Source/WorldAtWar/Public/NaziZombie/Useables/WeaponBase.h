@@ -207,6 +207,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	TEnumAsByte<EWeaponID> GetWeaponID() const { return WeaponID; }
+
 	void WeaponIsNowInHand(bool InHand);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)

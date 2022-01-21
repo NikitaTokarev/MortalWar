@@ -297,13 +297,16 @@ void AZombieBase::Hit(ANaziZombieCharacter* Player, FHitResult HitResult)
 		{
 			FString BoneName = HitResult.BoneName.ToString();
 
-			if (BoneName.IsEmpty()) return;
+			if (BoneName.IsEmpty()) return;			
 
 			if (uint8 HitPart = GetHitPart(BoneName))
 			{
 				if (uint8 PointsForHit = GetPointsForHit(HitPart, WeaponDamage, Player, bWeaponIsAuto))
 				{
-					PState->IncrementPoints(PointsForHit);
+					if (bShouldTakePoints)
+					{
+						PState->IncrementPoints(PointsForHit);
+					}					
 				}
 			}
 		}
@@ -322,11 +325,15 @@ void AZombieBase::Hit_Knife(ANaziZombieCharacter* Player, float BaseDamage, floa
 		{
 			PState->AddKill();
 			PState->AddKnifing(this);
-			PState->IncrementPoints(50);
 
+			if (bShouldTakePoints)
+			{
+				PState->IncrementPoints(50);
+			}
+			
 			Player->IncrementRage(RageForKilling);
 		}
-		else
+		else if (bShouldTakePoints)
 		{
 			PState->IncrementPoints(15);
 		}

@@ -69,6 +69,9 @@ protected:
 	float CleanupDelay;
 
 	UPROPERTY(EditDefaultsOnly)
+	bool bShouldTakePoints = true;
+
+	UPROPERTY(EditDefaultsOnly)
 	bool bSimulatePhysicsAfterDeath = true;
 
 	UPROPERTY(ReplicatedUsing = OnRep_Die, BlueprintReadOnly)
