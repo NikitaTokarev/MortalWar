@@ -735,3 +735,14 @@ void ANaziZombieCharacter::IncrementPoints(int32 Value)
 	}
 }
 
+
+void ANaziZombieCharacter::AddBonusMaxHealth(float HealthAmount, bool bRecoveryHealth)
+{
+	MaxHealth += HealthAmount;
+	
+	if (bRecoveryHealth)
+	{
+		Health = MaxHealth;
+	}
+}
+

@@ -15,6 +15,8 @@ class UAnimMontage;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAmmoChanged, int32, CurrentMagazineAmmo, int32, CurrentTotalAmmo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnWeaponHit, class AZombieBase*, TargetEnemy, const FVector, HitLocation);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWeaponIsReady);
+
 UENUM(BlueprintType)
 enum EHitLocation
 {
@@ -107,7 +109,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
 	UAnimMontage* ThirdPersonMontage;
 
-	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings", Replicated)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Nazi Zombie Settings", Replicated)
 	float DelayBetweenShots;
 
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
@@ -139,6 +141,9 @@ protected:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnWeaponHit OnWeaponHit;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnWeaponIsReady OnWeaponIsReady;
 	
 	bool bCanFire;
 	void ControlFireDelay();
@@ -240,4 +245,7 @@ public:
 	bool IsFullAmmo() const { return CurrentTotalAmmo == WeaponMaxAmmo && CurrentMagazineAmmo == MagazineMaxAmmo; }
 
 	int8 GetWeaponSlot() const { return int8(WeaponID.GetValue()); }
+
+	UFUNCTION(BlueprintCallable)
+	void SetNewMaxAmmo(float Multiplier);
 };

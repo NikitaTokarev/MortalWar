@@ -227,4 +227,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void IncrementPoints(int32 Value);
+
+	UFUNCTION(BlueprintCallable)
+	void AddBonusMaxHealth(float HealthAmount, bool bRecoveryHealth = false);
 };

@@ -213,6 +213,7 @@ void AWeaponBase::Multi_Fire_Implementation(const FHitResult& HitResult)
 void AWeaponBase::ControlFireDelay()
 {
 	bCanFire = true;
+	OnWeaponIsReady.Broadcast();
 }
 
 void AWeaponBase::ControlReloadingDelay()
@@ -543,6 +544,17 @@ void AWeaponBase::DeactivateRageMode()
 	CurrentTotalAmmo = BeforeRage_TotalAmmo;
 	CurrentMagazineAmmo = BeforeRage_MagazineAmmo;
 	DelayBetweenShots = BeforeRage_DelayBetweenShots;
+}
+
+
+
+void AWeaponBase::SetNewMaxAmmo(float Multiplier)
+{
+	WeaponMaxAmmo *= Multiplier;
+	CurrentTotalAmmo *= Multiplier;
+	BeforeRage_TotalAmmo *= Multiplier;
+
+	OnAmmoChanged.Broadcast(CurrentMagazineAmmo, CurrentTotalAmmo);
 }
 
 
