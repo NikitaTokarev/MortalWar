@@ -39,6 +39,12 @@ protected:
 	TArray<TSubclassOf<class AWeaponBase>> AdditionalWeapons;
 
 	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AKnife> KnifeClass = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	bool bSpawnZombies = true;
+
+	UPROPERTY(EditDefaultsOnly)
 	uint8 MaxZombiesOnMap = 30;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -87,4 +93,5 @@ public:
 	void AddNewZombieSpawnPoints(TArray<ANaziZombieZombieSpawnPoint*> NewSpawnPoints);
 
 	TArray<TSubclassOf<class AWeaponBase>> GetAdditionalWeapons() const { return AdditionalWeapons; }
+	TSubclassOf<class AKnife> GetKnifeClass() const { return KnifeClass; }
 };

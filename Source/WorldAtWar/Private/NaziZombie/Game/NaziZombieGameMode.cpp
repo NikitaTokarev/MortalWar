@@ -37,6 +37,8 @@ void ANaziZombieGameMode::BeginPlay()
 
 	if (!GetWorld()) return;
 
+	if (!bSpawnZombies) return;
+
 	TArray<AActor*> TempActors;
 
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ANaziZombieZombieSpawnPoint::StaticClass(), TempActors);

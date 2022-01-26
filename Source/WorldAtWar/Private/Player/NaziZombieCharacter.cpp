@@ -2,6 +2,7 @@
 
 
 #include "Player/NaziZombieCharacter.h"
+#include "NaziZombie/Game/NaziZombieGameMode.h"
 #include "NaziZombie/Useables/InteractableBase.h"
 #include "NaziZombie/Zombie/ZombieBase.h"
 #include "NaziZombie/Useables/WeaponBase.h"
@@ -43,13 +44,68 @@ void ANaziZombieCharacter::BeginPlay()
 		OnRep_HealthChanged();
 		OnTakeAnyDamage.AddDynamic(this, &ANaziZombieCharacter::GetAnyDamageFromEnemy);
 
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
+		if (!GetWorld()) return;
 
-		Knife = GetWorld()->SpawnActor<AKnife>(KnifeClass, SpawnParams);
-		OnRep_KnifeAttached();
+		
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
 
-	}
+			CurrentWeapon = GetWorld()->SpawnActor<AWeaponBase>(StartingWeaponClass, SpawnParams);
+
+			if (CurrentWeapon)
+			{
+				PreviousWeapon = CurrentWeapon;
+				WeaponArray.Add(CurrentWeapon);
+				CurrentWeapon->WeaponIsNowInHand(true);
+				OnRep_AttachWeapon();
+			}
+
+			WeaponArray.Add(nullptr);
+			WeaponArray.Add(nullptr);
+
+
+			if (ANaziZombieGameMode* GM = GetWorld()->GetAuthGameMode<ANaziZombieGameMode>())
+			{
+				auto AdditionalWeaponClasses = GM->GetAdditionalWeapons();
+				if (AdditionalWeaponClasses.Num() > 0)
+				{
+					for (auto& WeapClass : AdditionalWeaponClasses)
+					{
+						AWeaponBase* Weapon = GetWorld()->SpawnActor<AWeaponBase>(WeapClass, SpawnParams);
+						if (Weapon && WeaponArray.IsValidIndex(Weapon->GetWeaponSlot()))
+						{
+							WeaponArray[Weapon->GetWeaponSlot()] = Weapon;
+							if (Weapon->GetWeaponSlot() == 0)
+							{
+								CurrentWeapon->WeaponIsNowInHand(false);
+								CurrentWeapon->SetLifeSpan(0.1f);
+
+								CurrentWeapon = Weapon;
+								PreviousWeapon = CurrentWeapon;
+								OnRep_AttachWeapon();
+							}
+						}
+					}
+
+					TSubclassOf<AKnife> WeaponKnifeClass = GM->GetKnifeClass();
+					if (WeaponKnifeClass == nullptr)
+					{
+						WeaponKnifeClass = KnifeClass;
+					}
+
+					Knife = GetWorld()->SpawnActor<AKnife>(WeaponKnifeClass, SpawnParams);
+					OnRep_KnifeAttached();
+				}
+
+			}
+
+
+			/*if (AWeaponBase* Weapon = GetWorld()->SpawnActor<AWeaponBase>(SecondWeaponClass, SpawnParams))
+			{
+				Weapon->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocket"));
+				WeaponArray.Add(Weapon);
+			}*/
+		}
 
 
 	//GetWorld()->GetTimerManager().SetTimer(TInteractTimerHandle, this, &ANaziZombieCharacter::SetInteractionObject, 0.3f, true);
@@ -191,7 +247,6 @@ void ANaziZombieCharacter::OnRep_Death()
 
 void ANaziZombieCharacter::OnRep_KnifeAttached()
 {
-
 
 	if (IsLocallyControlled())
 	{

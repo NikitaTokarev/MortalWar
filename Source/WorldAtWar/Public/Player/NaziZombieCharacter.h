@@ -45,6 +45,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	float Rage;
+
+	UPROPERTY(BlueprintReadOnly)
+	float DamageMultiplier = 1.0f;
 	
 	FTimerHandle DecrementRageHandle;
 
@@ -230,4 +233,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddBonusMaxHealth(float HealthAmount, bool bRecoveryHealth = false);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	float GetDamageMultiplier() const { return DamageMultiplier; }
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeDamageMultiplier(float DamageValue) { DamageMultiplier += DamageValue; }
 };

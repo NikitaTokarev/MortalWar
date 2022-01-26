@@ -192,26 +192,28 @@ int16 AZombieBase::GetPointsForHit(uint8 HitPart, FWeaponDamage WeaponDamage, AN
 {
 	TArray<int> DamageScoreKillScore;	
 
+	float DamageMultiplier = Player->GetDamageMultiplier();
+
 	switch (HitPart)
 	{
 	case 1: // limb
 	{
-		DamageScoreKillScore.Append({ int(WeaponDamage.GetDamage(EHitLocation::None)), 10, 25 });
+		DamageScoreKillScore.Append({ int(WeaponDamage.GetDamage(EHitLocation::None) * DamageMultiplier), bIsAuto? 5 : 10, 25 });
 		break;
 	}
 	case 2: // torso
 	{
-		DamageScoreKillScore.Append({ int(WeaponDamage.GetDamage(EHitLocation::Torso)), 10, 25 });
+		DamageScoreKillScore.Append({ int(WeaponDamage.GetDamage(EHitLocation::Torso) * DamageMultiplier), bIsAuto ? 5 : 10, 25 });
 		break;
 	}
 	case 3: // neck
 	{
-		DamageScoreKillScore.Append({ int((WeaponDamage.GetDamage(EHitLocation::Torso)) * 1.2), 20, 50 });
+		DamageScoreKillScore.Append({ int((WeaponDamage.GetDamage(EHitLocation::Torso) * DamageMultiplier) * 1.5), bIsAuto? 10 : 20, 50 });
 		break;
 	}
 	case 4: // head
 	{
-		DamageScoreKillScore.Append({ int(WeaponDamage.GetDamage(EHitLocation::Head)), 50, 100 });
+		DamageScoreKillScore.Append({ int(WeaponDamage.GetDamage(EHitLocation::Head) * DamageMultiplier), bIsAuto ? 20 : 50, 100 });
 		break;
 	}
 
@@ -317,7 +319,7 @@ void AZombieBase::Hit_Knife(ANaziZombieCharacter* Player, float BaseDamage, floa
 {
 	if (!Player || bIsDead) return;
 
-	float FinalDamage = BaseDamage * Resistances.DamageFromMelee;
+	float FinalDamage = BaseDamage * Resistances.DamageFromMelee * Player->GetDamageMultiplier();
 
 	if (ANaziZombiePlayerState* PState = Cast<ANaziZombiePlayerState>(Player->GetPlayerState()))
 	{

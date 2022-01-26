@@ -3,7 +3,7 @@
 
 #include "Player/CharacterBase.h"
 #include "NaziZombie/Useables/WeaponBase.h"
-#include "NaziZombie/Game/NaziZombieGameMode.h"
+
 
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
@@ -61,51 +61,7 @@ void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!GetWorld()) return;
-
-	if (HasAuthority())
-	{
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-
-		CurrentWeapon = GetWorld()->SpawnActor<AWeaponBase>(StartingWeaponClass, SpawnParams);
-
-		if (CurrentWeapon)
-		{
-			PreviousWeapon = CurrentWeapon;
-			WeaponArray.Add(CurrentWeapon);
-			CurrentWeapon->WeaponIsNowInHand(true);
-			OnRep_AttachWeapon();
-		}
-
-		WeaponArray.Add(nullptr);
-		WeaponArray.Add(nullptr);
-		
-
-		if (ANaziZombieGameMode* GM = GetWorld()->GetAuthGameMode<ANaziZombieGameMode>())
-		{
-			auto AdditionalWeaponClasses = GM->GetAdditionalWeapons();
-			if (AdditionalWeaponClasses.Num() > 0)
-			{
-				for (auto& WeapClass : AdditionalWeaponClasses)
-				{
-					AWeaponBase* Weapon = GetWorld()->SpawnActor<AWeaponBase>(WeapClass, SpawnParams);
-					if (Weapon && WeaponArray.IsValidIndex(Weapon->GetWeaponSlot()))
-					{
-						WeaponArray[Weapon->GetWeaponSlot()] = Weapon;
-					}
-				}
-			}
-			
-		}	
-			
-		
-		/*if (AWeaponBase* Weapon = GetWorld()->SpawnActor<AWeaponBase>(SecondWeaponClass, SpawnParams))
-		{
-			Weapon->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("s_weaponSocket"));
-			WeaponArray.Add(Weapon);			
-		}*/
-	}
+	
 }
 
 void ACharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
