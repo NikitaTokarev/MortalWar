@@ -48,6 +48,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	float DamageMultiplier = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float Armor = 1.0f;
 	
 	FTimerHandle DecrementRageHandle;
 
@@ -239,4 +242,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeDamageMultiplier(float DamageValue) { DamageMultiplier += DamageValue; }
+
+	UFUNCTION(BlueprintCallable)
+	void ChangePlayerArmor(float ArmorValue) { Armor += ArmorValue; }
 };

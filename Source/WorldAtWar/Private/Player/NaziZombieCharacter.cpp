@@ -208,8 +208,10 @@ void ANaziZombieCharacter::OnRep_HealthChanged()
 void ANaziZombieCharacter::GetAnyDamageFromEnemy(AActor* DamagedActor, float Damage, const  UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
 	if (HasAuthority())
-	{
-		Health = FMath::Max(Health - Damage, 0.0f);
+	{	
+		float FinalDamage = Damage / Armor;
+
+		Health = FMath::Max(Health - FinalDamage, 0.0f);
 		OnRep_HealthChanged();
 
 		if (!bIsDead && Health <= 0)

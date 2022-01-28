@@ -13,7 +13,7 @@ class UCapsuleComponent;
 class USkeletalMeshComponent;
 class UFloatingPawnMovement;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDeath);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDeath, AZombieBase*, Enemy);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTakeDamageRange, class ANaziZombieCharacter*, Player, float, DamageAmount);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTakeDamageMelee, class ANaziZombieCharacter*, Player, float, DamageAmount);
 
@@ -115,7 +115,10 @@ protected:
 	virtual void BeginPlay() override;
 	uint8 GetHitPart(const FString& BoneName);
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	void DecrementHealth(int16 Damage);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void DecrementHealth(int InDamage);
+	void DecrementHealth_Implementation(int InDamage);
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Death")
 	void Die();
@@ -139,6 +142,9 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "VFX")
 	void PlayBuffVFX();
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeHealth(float HealthAmount) { Health = FMath::Clamp(Health + HealthAmount, 0.0f, MaxHealth); }
 
 public:
 	void Hit(ANaziZombieCharacter* Player, FHitResult HitResult);

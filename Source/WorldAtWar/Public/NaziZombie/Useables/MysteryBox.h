@@ -9,6 +9,10 @@
 /**
  * 
  */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLootTaken);
+
+
 UCLASS()
 class WORLDATWAR_API AMysteryBox : public AInteractableBase
 {
@@ -39,6 +43,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Nazi Zombie Settings")
 	TArray<TSubclassOf<class AAbstractWeapon>> DroppedWeapons;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnLootTaken OnLootTaken;
+
 	class ALootWeaponBase* LootWeapon = nullptr;
 
 	bool bIsClosing = false;
@@ -46,6 +53,8 @@ protected:
 	FTimerHandle DestroyTimerHandle;
 
 	void DestroyMysteryBox();
+
+	void TrophiesPickedUp();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartDisappearing();

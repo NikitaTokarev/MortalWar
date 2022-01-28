@@ -66,7 +66,8 @@ void AZombieBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	DOREPLIFETIME(AZombieBase, Health);
 }
 
-void AZombieBase::DecrementHealth(int16 InDamage)
+
+void AZombieBase::DecrementHealth_Implementation(int InDamage)
 {
 	if (HasAuthority())
 	{
@@ -91,7 +92,7 @@ void AZombieBase::DecrementHealth(int16 InDamage)
 
 void AZombieBase::OnRep_Die()
 {
-	OnEnemyDeath.Broadcast();
+	OnEnemyDeath.Broadcast(this);
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);

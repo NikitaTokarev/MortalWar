@@ -58,7 +58,7 @@ void AMysteryBox::Use(ANaziZombieCharacter* Player)
 				if (LootWeapon)
 				{
 					LootWeapon->InitializeLootWeapon(DroppedWeapons[FMath::RandRange(0, DroppedWeapons.Num()-1)]);
-					LootWeapon->OnLootPickup.AddUObject(this, &AMysteryBox::DestroyMysteryBox);
+					LootWeapon->OnLootPickup.AddUObject(this, &AMysteryBox::TrophiesPickedUp);
 				}
 			}
 
@@ -100,4 +100,12 @@ void AMysteryBox::DestroyMysteryBox()
 
 	SetLifeSpan(2.0f);
 
+}
+
+
+void AMysteryBox::TrophiesPickedUp()
+{
+	OnLootTaken.Broadcast();
+	
+	DestroyMysteryBox();
 }
