@@ -53,10 +53,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UFloatingPawnMovement* MovementComponent;*/
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MaxHealth = 150.0f;
 
-	UPROPERTY(Replicated, BlueprintReadOnly)
+	UPROPERTY(Replicated, BlueprintReadWrite)
 	float Health;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -71,7 +71,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	bool bShouldTakePoints = true;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bSimulatePhysicsAfterDeath = true;
 
 	UPROPERTY(ReplicatedUsing = OnRep_Die, BlueprintReadOnly)
@@ -144,7 +144,10 @@ protected:
 	void PlayBuffVFX();
 
 	UFUNCTION(BlueprintCallable)
-	void ChangeHealth(float HealthAmount) { Health = FMath::Clamp(Health + HealthAmount, 0.0f, MaxHealth); }
+	void ChangeHealth(float HealthAmount);
+
+	UFUNCTION(BlueprintCallable)
+	void AddCleanupDelay(float Value) { CleanupDelay = FMath::Max(CleanupDelay + Value, 0.2f); }
 
 public:
 	void Hit(ANaziZombieCharacter* Player, FHitResult HitResult);
@@ -164,5 +167,5 @@ public:
 	FName GetChestBone_Implementation() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	float GetPercentHealth() const { return Health / MaxHealth; }
+	float GetPercentHealth() const { return Health / MaxHealth; }	
 };

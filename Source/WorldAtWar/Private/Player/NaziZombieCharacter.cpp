@@ -98,6 +98,11 @@ void ANaziZombieCharacter::BeginPlay()
 				}
 
 			}
+			else
+			{
+				Knife = GetWorld()->SpawnActor<AKnife>(KnifeClass, SpawnParams);
+				OnRep_KnifeAttached();
+			}
 
 
 			/*if (AWeaponBase* Weapon = GetWorld()->SpawnActor<AWeaponBase>(SecondWeaponClass, SpawnParams))

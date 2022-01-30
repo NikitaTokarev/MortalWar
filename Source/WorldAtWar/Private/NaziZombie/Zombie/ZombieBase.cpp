@@ -162,6 +162,18 @@ void AZombieBase::SpawnPickupAfterDeath(TSubclassOf<class APickupBase> PickupCla
 }
 
 
+
+void AZombieBase::ChangeHealth(float HealthAmount)
+{
+	float DamageAmount = Health;
+	Health = FMath::Clamp(Health + HealthAmount, 0.0f, MaxHealth);
+
+	DamageAmount -= Health;
+	OnTakeAnyDamage.Broadcast(this, DamageAmount, nullptr, nullptr, nullptr);
+}
+
+
+
 uint8 AZombieBase::GetHitPart(const FString& BoneName)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Hit Part: %s"), *BoneName);
