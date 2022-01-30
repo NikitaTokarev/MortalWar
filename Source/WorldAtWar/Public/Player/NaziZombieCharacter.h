@@ -51,7 +51,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float Armor = 1.0f;
-	
+		
 	FTimerHandle DecrementRageHandle;
 
 	FTimerHandle DiseaseHandle;

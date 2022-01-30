@@ -237,17 +237,20 @@ bool ACharacterBase::Multi_SetAiming_Validate(bool WantsToAim)
 
 
 void ACharacterBase::Multi_SetAiming_Implementation(bool WantsToAim)
-{
-	if (bIsInfected)
+{	
+	if (!bIsStunned)
 	{
-		GetCharacterMovement()->MaxWalkSpeed = WantsToAim ? 350.0f : 525.0f;
-	}
-	else
-	{
-		GetCharacterMovement()->MaxWalkSpeed = WantsToAim ? 400.0f : 600.0f;
-	}
-	
-	GetCharacterMovement()->SetJumpAllowed(!WantsToAim);
+		if (bIsInfected)
+		{
+			GetCharacterMovement()->MaxWalkSpeed = WantsToAim ? 350.0f : 525.0f;
+		}
+		else
+		{
+			GetCharacterMovement()->MaxWalkSpeed = WantsToAim ? 400.0f : 600.0f;
+		}
+
+		GetCharacterMovement()->SetJumpAllowed(!WantsToAim);
+	}		
 }
 
 
@@ -269,17 +272,19 @@ void ACharacterBase::OnAimingStart()
 		Multi_SetAiming(true);
 	}
 
-	GetCharacterMovement()->MaxWalkSpeed = bIsInfected ? 350.0f : 400.0f;
-
-
+	if (!bIsStunned)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = bIsInfected ? 350.0f : 400.0f;
+	}
 }
+
 
 void ACharacterBase::OnAimingEnd()
 {
 	bIsAiming = false;
 	OnAimingChanged.Broadcast(false);
 	FirstPersonCameraComponent->SetFieldOfView(90.f);
-	GetCharacterMovement()->SetJumpAllowed(true);
+	
 
 	if (!HasAuthority())
 	{
@@ -290,8 +295,12 @@ void ACharacterBase::OnAimingEnd()
 		Multi_SetAiming(false);
 	}
 
-	GetCharacterMovement()->MaxWalkSpeed = bIsInfected ? 525.0f : 600.0f;
-
+	if (!bIsStunned)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = bIsInfected ? 525.0f : 600.0f;
+		GetCharacterMovement()->SetJumpAllowed(true);
+	}
+	
 }
 
 
@@ -396,6 +405,32 @@ void ACharacterBase::SwitchNextWeapon(int8 WeaponSlot)
 
 
 
+void ACharacterBase::SetPlayerIsStun(bool bNewState)
+{
+	bIsStunned = bNewState;
+
+	if (bNewState)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 0.0f;
+		GetCharacterMovement()->SetJumpAllowed(false);
+	}
+	else
+	{
+		GetCharacterMovement()->SetJumpAllowed(!bIsAiming);
+
+		if (bIsAiming)
+		{
+			GetCharacterMovement()->MaxWalkSpeed = bIsInfected ? 350.0f : 400.0f;
+		}
+		else
+		{
+			GetCharacterMovement()->MaxWalkSpeed = bIsInfected ? 525.0f : 600.0f;
+		}
+	}
+}
+
+
+
 void ACharacterBase::MoveForward(float Value)
 {
 	if (Value != 0.0f)
@@ -435,12 +470,15 @@ void ACharacterBase::OnRep_InfectedStateChanged()
 		OnInfectedStateChanged.Broadcast(bIsInfected);
 	}
 
-	if (bIsInfected)
+	if (!bIsStunned)
 	{
-		GetCharacterMovement()->MaxWalkSpeed = bIsAiming ? 350.0f : 525.0f;
-	}
-	else
-	{
-		GetCharacterMovement()->MaxWalkSpeed = bIsAiming ? 400.0f : 600.0f;
-	}
+		if (bIsInfected)
+		{
+			GetCharacterMovement()->MaxWalkSpeed = bIsAiming ? 350.0f : 525.0f;
+		}
+		else
+		{
+			GetCharacterMovement()->MaxWalkSpeed = bIsAiming ? 400.0f : 600.0f;
+		}
+	}	
 }

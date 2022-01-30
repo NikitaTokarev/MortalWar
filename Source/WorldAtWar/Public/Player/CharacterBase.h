@@ -57,6 +57,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_InfectedStateChanged)
 	bool bIsInfected = false;
 
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsStunned = false;
+
 	//UPROPERTY(Replicated)
 	AWeaponBase* PreviousWeapon;
 
@@ -180,4 +183,7 @@ public:
 	bool IsRageMode() const { return bIsRage; }
 
 	bool GetIsInfected() const { return bIsInfected; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetPlayerIsStun(bool bNewState);
 };
