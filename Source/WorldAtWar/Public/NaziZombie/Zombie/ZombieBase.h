@@ -167,5 +167,5 @@ public:
 	FName GetChestBone_Implementation() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	float GetPercentHealth() const { return Health / MaxHealth; }	
+	float GetPercentHealth() const { return Health / MaxHealth; }		
 };

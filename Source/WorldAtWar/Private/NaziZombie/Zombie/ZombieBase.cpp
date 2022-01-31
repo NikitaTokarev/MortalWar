@@ -69,6 +69,8 @@ void AZombieBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 
 void AZombieBase::DecrementHealth_Implementation(int InDamage)
 {
+	if (Health <= 0.0f) return;
+
 	if (HasAuthority())
 	{
 		Health = FMath::Max(Health - InDamage, 0.0f);
@@ -108,7 +110,8 @@ void AZombieBase::OnRep_Die()
 
 void AZombieBase::Resurrect()
 {
-	Health = MaxHealth * 0.75;
+	MaxHealth *= 0.75;
+	Health = MaxHealth * 0.8;
 	Damage *= 0.33;
 }
 
