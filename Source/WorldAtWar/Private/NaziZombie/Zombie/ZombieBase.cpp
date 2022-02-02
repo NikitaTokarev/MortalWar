@@ -124,10 +124,14 @@ void AZombieBase::Die_Implementation()
 		bIsDead = true;
 		OnRep_Die();
 
-		if (AController* AIController = GetController())
+		if (bDestroyControllerAfterDeath)
 		{
-			AIController->Destroy();
+			if (AController* AIController = GetController())
+			{
+				AIController->Destroy();
+			}
 		}
+		
 		SetLifeSpan(CleanupDelay);
 
 		if (ANaziZombieGameMode* GM = GetWorld()->GetAuthGameMode<ANaziZombieGameMode>())

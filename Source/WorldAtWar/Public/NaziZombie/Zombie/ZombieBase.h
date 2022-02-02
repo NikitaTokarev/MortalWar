@@ -66,6 +66,9 @@ protected:
 	FResistanceData Resistances;
 
 	UPROPERTY(EditDefaultsOnly)
+	bool bDestroyControllerAfterDeath = true;
+
+	UPROPERTY(EditDefaultsOnly)
 	float CleanupDelay;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -95,7 +98,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<UAnimMontage*> AttackMontages;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<USoundWave*> DeathSounds;
 
 	UPROPERTY(EditDefaultsOnly)
