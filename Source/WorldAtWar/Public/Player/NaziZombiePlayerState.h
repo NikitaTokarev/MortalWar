@@ -51,7 +51,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	int32 GetPoints() const { return Points; }
 
-	void IncrementPoints(int16 Value);
+	void IncrementPoints(int32 Value);
 	bool DecrementPoints(int16 Value);
 
 	void AddKill() { ++Kills; }
