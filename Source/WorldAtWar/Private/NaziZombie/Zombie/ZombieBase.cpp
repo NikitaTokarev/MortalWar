@@ -186,7 +186,7 @@ uint8 AZombieBase::GetHitPart(const FString& BoneName)
 	UE_LOG(LogTemp, Warning, TEXT("Hit Part: %s"), *BoneName);
 
 	// limb hit
-	if (BoneName.Contains(FString("Leg")) || BoneName.Contains(FString("Arm")) || BoneName.Contains(FString("Thigh")) || BoneName.Contains(FString("Calf")) || BoneName.Contains(FString("Foot")))
+	if (BoneName.Contains(FString("Leg")) || BoneName.Contains(FString("Arm")) || BoneName.Contains(FString("Hand")) || BoneName.Contains(FString("Thigh")) || BoneName.Contains(FString("Calf")) || BoneName.Contains(FString("Foot")))
 	{
 		return 1;
 	}

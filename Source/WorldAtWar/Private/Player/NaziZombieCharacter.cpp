@@ -806,5 +806,11 @@ void ANaziZombieCharacter::AddBonusMaxHealth(float HealthAmount, bool bRecoveryH
 	{
 		Health = MaxHealth;
 	}
+	else
+	{
+		Health = FMath::Min(Health, MaxHealth);
+	}
+
+	OnHealthChanged.Broadcast(Health);
 }
 
