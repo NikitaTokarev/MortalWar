@@ -85,17 +85,17 @@ void ANaziZombieCharacter::BeginPlay()
 								OnRep_AttachWeapon();
 							}
 						}
-					}
-
-					TSubclassOf<AKnife> WeaponKnifeClass = GM->GetKnifeClass();
-					if (WeaponKnifeClass == nullptr)
-					{
-						WeaponKnifeClass = KnifeClass;
-					}
-
-					Knife = GetWorld()->SpawnActor<AKnife>(WeaponKnifeClass, SpawnParams);
-					OnRep_KnifeAttached();
+					}					
 				}
+
+				TSubclassOf<AKnife> WeaponKnifeClass = GM->GetKnifeClass();
+				if (WeaponKnifeClass == nullptr)
+				{
+					WeaponKnifeClass = KnifeClass;
+				}
+
+				Knife = GetWorld()->SpawnActor<AKnife>(WeaponKnifeClass, SpawnParams);
+				OnRep_KnifeAttached();
 
 			}
 			else

@@ -1,10 +1,10 @@
 package com.epicgames.ue4;
 
-import com.WorldAtWar.OBBDownloaderService;
-import com.WorldAtWar.DownloaderActivity;
+import com.LordsOfTheDead.OBBDownloaderService;
+import com.LordsOfTheDead.DownloaderActivity;
 import android.app.Activity;
 import com.google.android.vending.expansion.downloader.Helpers;
-import com.WorldAtWar.OBBData;
+import com.LordsOfTheDead.OBBData;
 
 
 public class DownloadShim
