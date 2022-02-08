@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.LordsOfTheDead;
+package com.MortalWar;
 
 import com.android.vending.expansion.zipfile.ZipResourceFile;
 import com.android.vending.expansion.zipfile.ZipResourceFile.ZipEntryRO;

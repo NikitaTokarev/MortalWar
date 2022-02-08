@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.LordsOfTheDead;
+package com.MortalWar;
 
 import com.google.android.vending.expansion.downloader.impl.DownloaderService;
 
@@ -61,6 +61,6 @@ public class OBBDownloaderService extends DownloaderService {
      */
     @Override
     public String getAlarmReceiverClassName() {
-        return com.LordsOfTheDead.AlarmReceiver.class.getName();
+        return com.MortalWar.AlarmReceiver.class.getName();
     }
 }

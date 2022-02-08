@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.LordsOfTheDead;
+package com.MortalWar;
 
 import com.google.android.vending.expansion.downloader.DownloaderClientMarshaller;
 
