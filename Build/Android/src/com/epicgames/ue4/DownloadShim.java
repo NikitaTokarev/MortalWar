@@ -1,10 +1,10 @@
 package com.epicgames.ue4;
 
-import com.MortalWar.OBBDownloaderService;
-import com.MortalWar.DownloaderActivity;
+import com.YourCompany.MortalWar.OBBDownloaderService;
+import com.YourCompany.MortalWar.DownloaderActivity;
 import android.app.Activity;
 import com.google.android.vending.expansion.downloader.Helpers;
-import com.MortalWar.OBBData;
+import com.YourCompany.MortalWar.OBBData;
 
 
 public class DownloadShim

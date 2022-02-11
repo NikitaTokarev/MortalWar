@@ -61,5 +61,8 @@
 			"Name": "XCodeSourceCodeAccess",
 			"Enabled": false
 		}
+	],
+	"TargetPlatforms": [
+		"Android"
 	]
 }

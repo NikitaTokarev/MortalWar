@@ -13,3 +13,5 @@ Saved
 *.xcodeproj
 *.xcworkspace
 *_BuiltData.uasset
+*.obb
+*.apk
