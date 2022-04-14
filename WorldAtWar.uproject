@@ -60,6 +60,10 @@
 		{
 			"Name": "XCodeSourceCodeAccess",
 			"Enabled": false
+		},
+		{
+			"Name": "EpicLeaderboard",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
